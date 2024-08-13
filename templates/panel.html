@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Item List Creator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #1a1a1a;
+            color: white;
+        }
+        .navbar {
+            background-color: #2e2e2e;;
+            padding: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .item-list {
+            padding: 20px;
+        }
+        .item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 5px;
+        }
+        .delete-btn {
+            background-color: #ff4d4d;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        input {
+            min-width: 30%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border: none;
+            border-radius: 2rem;
+            font-size: 1rem;
+            box-sizing: border-box;
+            color: white;
+            background-color: #4a4a4a;
+        }
+        select {
+            background-color: #4a4a4a;
+            border: none;
+            color: white;
+            padding: 1rem;
+            border-radius: 2rem;
+        }
+        button {
+            background-color: #3e8031;
+            border: none;
+            padding: 1rem;
+            border-radius: 2rem;
+            color: white;
+        }
+        .left {
+            display: block;
+            width: 100vw;
+        }
+
+        .item button {
+            margin-left: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            background-color: #4a4a4a;
+            color: white;
+            border: none;
+            border-radius: 3px;
+        }
+
+        .item button:hover {
+            background-color: #5a5a5a;
+        }
+    </style>
+</head>
+<body>
+    <div class="navbar">
+        <div class="left">
+            <input type="text" id="labelInput" placeholder="Enter label">
+            <select id="typeSelect">
+                <option value="text">Text</option>
+                <option value="textbox">Text Box</option>
+                <option value="checkbox">Checkbox</option>
+            </select>
+            <button onclick="addItem()">Add</button>
+        </div>
+        
+        <button onclick="saveItems()" >Save</button>
+    </div>
+
+    <div id="itemList" class="item-list"></div>
+
+    <script>
+        let items = {{ items|tojson|safe }};
+
+        function addItem() {
+            const label = document.getElementById('labelInput').value;
+            const type = document.getElementById('typeSelect').value;
+            if (label) {
+                items.push({ label, type });
+                updateItemList();
+                document.getElementById('labelInput').value = '';
+            }
+        }
+
+        function updateItemList() {
+            const itemList = document.getElementById('itemList');
+            itemList.innerHTML = '';
+            items.forEach((item, index) => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'item';
+                itemElement.innerHTML = `
+                    <span>${item.label} (${item.type})</span>
+                    <div>
+                        <button onclick="moveItemUp(${index})">▲</button>
+                        <button onclick="moveItemDown(${index})">▼</button>
+                        <button class="delete-btn" onclick="deleteItem(${index})">Delete</button>
+                    </div>
+                `;
+                itemList.appendChild(itemElement);
+            });
+        }
+
+        function deleteItem(index) {
+            items.splice(index, 1);
+            updateItemList();
+        }
+
+        function moveItemUp(index) {
+            if (index > 0) {
+                const temp = items[index];
+                items[index] = items[index - 1];
+                items[index - 1] = temp;
+                updateItemList();
+            }
+        }
+
+        function moveItemDown(index) {
+            if (index < items.length - 1) {
+                const temp = items[index];
+                items[index] = items[index + 1];
+                items[index + 1] = temp;
+                updateItemList();
+            }
+        }
+
+        function saveItems() {
+            fetch('{{ url_for("save_items") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(items)
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Success:', data);
+                alert('Items saved successfully!');
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                alert('Error saving items: ' + error.message);
+            });
+        }
+
+        // Initial update of the item list
+        updateItemList();
+    </script>
+</body>
+</html>

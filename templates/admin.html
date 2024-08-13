@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Panel - Log In</title>
+    <style>
+        body {
+            background-color: #1a1a1a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        .form-container {
+            background-color: #2e2e2e;
+            padding: 2rem;
+            border-radius: 2rem;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+        .form-container input[type="text"],
+        .form-container input[type="password"],
+        .form-container button {
+            width: 100%;
+            padding: 1rem;
+            margin: 0.5rem 0;
+            border: none;
+            border-radius: 2rem;
+            background-color: #4a4a4a;
+            color: #fff;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .form-container button {
+            background-color: #5c5cff;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .form-container button:hover {
+            background-color: #4a4ad4;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <p id="errorMessage" style="color: red; display: none;"></p>
+            <button type="submit">Log in</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            const data = JSON.stringify({
+                username: username,
+                password: password
+            });
+            fetch('{{ url_for("admin") }}', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: data
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                console.log('Response:', data);
+                const errorMessage = document.getElementById('errorMessage');
+
+                if (data.status === 'success') {
+                    errorMessage.style.display = 'none';
+                    if (data.message) {
+                        const code = encodeURIComponent(data.message);
+                        window.location.href = `/panel?&code=${code}`;
+                    } else {
+                        window.location.href = '/panel';
+                    }
+                } else {
+                    errorMessage.textContent = "Wrong username or password";
+                    errorMessage.style.display = 'block';
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                const errorMessage = document.getElementById('errorMessage');
+                errorMessage.textContent = "Wrong username or password";
+                errorMessage.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
