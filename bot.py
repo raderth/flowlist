@@ -5,7 +5,7 @@ from discord.ui import Button, View
 import os
 
 intents = discord.Intents.default()
-bot = commands.Bot(intents=intents)
+bot = commands.Bot(command_prefix="!", intents=intents)
 
 @bot.tree.command(name="embed_with_button", description="Sends an embed with a button.")
 async def embed_with_button(interaction: discord.Interaction):
