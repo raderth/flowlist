@@ -19,7 +19,7 @@ def save_items():
       print("Received items:", items)
       set('items', items)
       return jsonify({"status": "success"})
-    elif request.args.get('code') == os.environ['ADMIN']:
+    elif request.args.get('code') == 'XPAat7my219H2lxT1auHpSyGTNJRhV0c':
       items = get('items')
       return render_template('panel.html', items=items or [])
     return "<h1>404 not found</h1>"
@@ -43,7 +43,7 @@ def main():
   return render_template("index.html", content=content)
 
 TEST_USERNAME = "admin"
-TEST_PASSWORD = os.environ['pass']
+TEST_PASSWORD = 'lGGN2ZEfmL'
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
@@ -53,7 +53,7 @@ def admin():
     password = data.get('password')
 
     if username == TEST_USERNAME and password == TEST_PASSWORD:
-        return jsonify({"status": "success", "message": os.environ['ADMIN']}), 200
+        return jsonify({"status": "success", "message": 'XPAat7my219H2lxT1auHpSyGTNJRhV0c'}), 200
     else:
         return jsonify({"status": "error", "message": "Invalid credentials"}), 401
   return render_template("admin.html")

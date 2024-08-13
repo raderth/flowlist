@@ -16,7 +16,7 @@ async def run_file(file):
 async def main():
     await asyncio.gather(
         run_file('web.py'),
-        #run_file('bot.py')
+        run_file('bot.py')
     )
 
 asyncio.run(main())
