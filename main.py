@@ -150,6 +150,6 @@ def run_bot():
    bot.run('MTI3MjU4NDYzNTY3NDUzMDAwNQ.GyCbE7.CpA43YTQuY7Xve7SScg-HHu_Ku_6yZlBb5ip1I')
 
 if __name__ == "__main__":
-  app.run(host='0.0.0.0', port=80, threaded=True, debug=True)
   threading.Thread(target=run_bot).start()
+  app.run(host='0.0.0.0', port=80, threaded=True, debug=True)
   
