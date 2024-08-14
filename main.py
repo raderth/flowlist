@@ -104,13 +104,21 @@ def oauth_callback():
             user_id = user_info['id']
 
             # Send the user ID to your Discord bot
-            bot.loop.create_task(send_confirmation_message(user_id))
+            message_queue.put(int(user_id))
 
             return main()
         else:
             return "Failed to fetch user information."
     else:
         return "Authorization failed."
+    
+async def process_message_queue():
+    while True:
+        try:
+            user_id = message_queue.get_nowait()
+            await send_confirmation_message(user_id)
+        except queue.Empty:
+            await asyncio.sleep(1)
     
 async def send_confirmation_message(user_id):
     guild_id = 837786954128687154
@@ -151,6 +159,7 @@ async def embed_with_button(interaction: discord.Interaction):
 async def on_ready():
     #await bot.tree.sync()
     print(f'Logged in as {bot.user}! Commands synced.')
+    bot.loop.create_task(process_message_queue())
 
 def run_bot():
   bot.run('MTI3MjU4NDYzNTY3NDUzMDAwNQ.GyCbE7.CpA43YTQuY7Xve7SScg-HHu_Ku_6yZlBb5ip1I')
