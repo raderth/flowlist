@@ -47,13 +47,13 @@ def form():
   items = get('items')
   content = ""
   for item in items:
-    item["label"] = item["label"].replace(" ", "_")
+    replaced = item["label"].replace(" ", "_")
     if item["type"] == "text":
-      content += text.format(item["label"], item["label"])
+      content += text.format(replaced, item["label"])
     elif item["type"] == "textbox":
-      content += textbox.format(item["label"], item["label"])
+      content += textbox.format(replaced, item["label"])
     elif item["type"] == "checkbox":
-      content += checkbox.format(item["label"], item["label"])
+      content += checkbox.format(item["label"], replaced)
     
   return render_template("index.html", content=content)
 
@@ -122,14 +122,7 @@ def oauth_callback():
 @app.route('/submit', methods=['POST'])
 def submit():
     data = request.json
-    
-    # Process the form data here
-    # For example, you can print it or save it to a database
-    print(data)
-    print(data["code"])
-    
-    # You can perform any necessary actions with the data here
-    
+    message_queue.put(data)
     return jsonify({"status": "success"}), 200
 
 @app.route('/success')
@@ -139,8 +132,8 @@ def success():
 async def process_message_queue():
     while True:
         try:
-            user_id = message_queue.get_nowait()
-            await send_confirmation_message(user_id)
+            data = message_queue.get_nowait()
+            await send_confirmation_message(data['code'])
         except queue.Empty:
             await asyncio.sleep(1)
     
@@ -148,9 +141,9 @@ async def send_confirmation_message(user_id):
     guild_id = 837786954128687154
     guild = discord.utils.get(bot.guilds, id=guild_id)
     for member in guild.members:
-        print(member.id, " : ", user_id)
         if member.id == user_id:
-            await member.send(f"Hello! Your user id is: {user_id}")
+            embed = discord.Embed(title="Confirmation", description=f"Your application has been submitted and is being carefully reviewed", color=0xffa500)  # Orange color
+            await member.send(embed=embed)
 
 ##### BOT #####
 
