@@ -143,7 +143,7 @@ async def send_confirmation_message(data):
     guild_id = 837786954128687154
     guild = discord.utils.get(bot.guilds, id=guild_id)
     for member in guild.members:
-        if int(member.id) == int(data['user_id']):
+        if int(member.id) == int(data['code']):
             embed = discord.Embed(title="Confirmation", description=f"Your application has been submitted and is being carefully reviewed", color=0xffa500)  # Orange color
             await member.send(embed=embed)
 
