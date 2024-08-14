@@ -11,6 +11,7 @@ import asyncio
 message_queue = queue.Queue()
 
 intents = discord.Intents.default()
+intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
 
 def set(key, value):
