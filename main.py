@@ -133,6 +133,7 @@ async def process_message_queue():
     while True:
         try:
             data = message_queue.get_nowait()
+            print(data)
             await send_confirmation_message(data['code'])
         except queue.Empty:
             await asyncio.sleep(1)
