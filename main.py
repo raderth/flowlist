@@ -147,8 +147,30 @@ async def send_confirmation_message(data):
             embed = discord.Embed(title="Confirmation", description=f"Your application has been submitted and is being carefully reviewed", color=0xffa500)  # Orange color
             await member.send(embed=embed)
 
+    embed = discord.Embed(title="Application")
     for key, value in data.items():
-      embed.add_field(name=key, value=value, inline=False)
+        embed.add_field(name=key, value=value, inline=False)
+
+    button = Button(label="Accept", style=discord.ButtonStyle.green)
+    button2 = Button(label="Deny", style=discord.ButtonStyle.red)
+
+    async def button_callback(interaction):
+        response_embed = discord.Embed(title="Accepted!", description="player name was accepted!", color=discord.Color.green())
+        await interaction.response.edit_message(embed=response_embed, view=None)
+
+    async def button2_callback(interaction):
+        response_embed = discord.Embed(title="Denied!", description="player name was denied!", color=discord.Color.red())
+        await interaction.response.edit_message(embed=response_embed, view=None)
+
+    button.callback = button_callback
+    button2.callback = button2_callback
+
+    view = View()
+    view.add_item(button)
+    view.add_item(button2)
+
+    channel = bot.get_channel(837786954128687157)
+    await channel.send(embed=embed, view=view)
 
 ##### BOT #####
 
