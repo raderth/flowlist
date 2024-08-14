@@ -81,7 +81,7 @@ REDIRECT_URI = "http://143.47.234.184/"
 def oauth_callback():
     code = request.args.get('code')
     if not code:
-       return redirect("http://143.47.234.184/", code=302)
+       return redirect("https://discord.com/oauth2/authorize?client_id=1272584635674530005&response_type=code&redirect_uri=http%3A%2F%2F143.47.234.184%2F&scope=identify", code=302)
 
     # Exchange the code for a token
     data = {
