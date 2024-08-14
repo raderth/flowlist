@@ -116,6 +116,7 @@ async def send_confirmation_message(user_id):
     guild_id = 837786954128687154
     guild = discord.utils.get(bot.guilds, id=guild_id)
     for member in guild.members:
+        print(member.id, " : ", user_id)
         if member.id == user_id:
             await member.send(f"Hello! Your user id is: {user_id}")
 
