@@ -135,22 +135,18 @@
         
         const jsonData = {};
         
-        // Handle input elements
-        const formInputs = form.querySelectorAll('input[name], select[name], textarea[name]');
-        formInputs.forEach(input => {
-            if (input.name && input.name.trim() !== '') {
-                const key = input.name.replace(/_/g, ' ');
-                jsonData[key] = input.value;
-            }
-        });
-        
-        // Handle contenteditable elements
-        const contentEditables = form.querySelectorAll('[contenteditable][data-name]');
-        contentEditables.forEach(element => {
-            const name = element.getAttribute('data-name');
-            if (name && name.trim() !== '') {
-                const key = name.replace(/_/g, ' ');
-                jsonData[key] = element.textContent.trim();
+        // Handle all elements with a name attribute, including contenteditable spans
+        const namedElements = form.querySelectorAll('[name]');
+        namedElements.forEach(element => {
+            if (element.name && element.name.trim() !== '') {
+                const key = element.name.replace(/_/g, ' ');
+                if (element.tagName.toLowerCase() === 'span' && element.getAttribute('contenteditable') !== null) {
+                    // For contenteditable spans, use textContent
+                    jsonData[key] = element.textContent.trim();
+                } else {
+                    // For other input elements, use value
+                    jsonData[key] = element.value;
+                }
             }
         });
         
