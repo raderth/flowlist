@@ -133,14 +133,18 @@
     form.addEventListener('submit', function(e) {
         e.preventDefault();
         
-        const formData = new FormData(form);
         const jsonData = {};
         
-        formData.forEach((value, key) => {
-            if (key) {
-                jsonData[key] = value;
+        // Get all form elements
+        const formElements = form.elements;
+        
+        for (let i = 0; i < formElements.length; i++) {
+            const element = formElements[i];
+            if (element.name && element.name.trim() !== '') {
+                // Use the full name attribute as the key
+                jsonData[element.name] = element.value;
             }
-        });
+        }
         
         // Get the code from the URL
         const urlParams = new URLSearchParams(window.location.search);
