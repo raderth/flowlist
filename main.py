@@ -147,9 +147,9 @@ async def on_ready():
     print(f'Logged in as {bot.user}! Commands synced.')
 
 def run_bot():
-   bot.run('MTI3MjU4NDYzNTY3NDUzMDAwNQ.GyCbE7.CpA43YTQuY7Xve7SScg-HHu_Ku_6yZlBb5ip1I')
+  bot.run('MTI3MjU4NDYzNTY3NDUzMDAwNQ.GyCbE7.CpA43YTQuY7Xve7SScg-HHu_Ku_6yZlBb5ip1I')
 
 if __name__ == "__main__":
   threading.Thread(target=run_bot).start()
-  app.run(host='0.0.0.0', port=80, threaded=True, debug=True)
+  app.run(host='0.0.0.0', port=80)
   
