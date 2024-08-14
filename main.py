@@ -7,6 +7,7 @@ from discord.ui import Button, View
 import requests
 import threading
 import queue
+import asyncio
 message_queue = queue.Queue()
 
 intents = discord.Intents.default()
