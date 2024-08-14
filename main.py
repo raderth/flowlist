@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, jsonify, redirect, url_for
 import shelve
 import discord
 from discord.ext import commands
@@ -39,17 +39,18 @@ def save_items():
     return "<h1>404 not found</h1>"
 
 text = '<input class="small_text" name={} placeholder="{}" required>'
-textbox = '<span placeholder="{}" class="textarea" role="textbox" contenteditable></span>'
+textbox = '<span name={} placeholder="{}" class="textarea" role="textbox" contenteditable></span>'
 checkbox = '<div class="checkbox"><label>{}</label><input type="checkbox" name={} /></div>'
 
-def main():
+@app.route('/form')
+def form():
   items = get('items')
   content = ""
   for item in items:
     if item["type"] == "text":
       content += text.format(item["label"], item["label"])
     elif item["type"] == "textbox":
-      content += textbox.format(item["label"])
+      content += textbox.format(item["label"], item["label"])
     elif item["type"] == "checkbox":
       content += checkbox.format(item["label"], item["label"])
     
@@ -108,14 +109,31 @@ def oauth_callback():
             user_id = user_info['id']
 
             # Send the user ID to your Discord bot
-            message_queue.put(int(user_id))
+            #message_queue.put(int(user_id))
 
-            return main()
+
+            return redirect(f"{url_for('form')}?code={user_id}", code=302)
         else:
             return "Failed to fetch user information."
     else:
         return "Authorization failed."
     
+@app.route('/submit', methods=['POST'])
+def submit():
+    data = request.json
+    
+    # Process the form data here
+    # For example, you can print it or save it to a database
+    print(data)
+    
+    # You can perform any necessary actions with the data here
+    
+    return jsonify({"status": "success"}), 200
+
+@app.route('/success')
+def success():
+    return "Success"
+
 async def process_message_queue():
     while True:
         try:

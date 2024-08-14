@@ -127,5 +127,47 @@
             element.classList.remove('has-content');
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const formData = new FormData(form);
+        const jsonData = {};
+        
+        formData.forEach((value, key) => {
+            if (key) {
+                jsonData[key] = value;
+            }
+        });
+        
+        // Get the code from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (code) {
+            jsonData['code'] = code;
+        }
+        
+        fetch("{{ url_for('submit') }}", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(jsonData),
+        })
+        .then(response => {
+            if (response.ok) {
+                window.location.href = '/success';
+            } else {
+                throw new Error('Form submission failed');
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            alert('An error occurred while submitting the form.');
+        });
+    });
+});
 </script>
 </html>
