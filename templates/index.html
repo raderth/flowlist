@@ -135,17 +135,24 @@
         
         const jsonData = {};
         
-        // Get all form elements
-        const formElements = form.elements;
-        
-        for (let i = 0; i < formElements.length; i++) {
-            const element = formElements[i];
-            if (element.name && element.name.trim() !== '') {
-                // Replace underscores with spaces in the key name
-                const key = element.name.replace(/_/g, ' ');
-                jsonData[key] = element.value;
+        // Handle input elements
+        const formInputs = form.querySelectorAll('input[name], select[name], textarea[name]');
+        formInputs.forEach(input => {
+            if (input.name && input.name.trim() !== '') {
+                const key = input.name.replace(/_/g, ' ');
+                jsonData[key] = input.value;
             }
-        }
+        });
+        
+        // Handle contenteditable elements
+        const contentEditables = form.querySelectorAll('[contenteditable][data-name]');
+        contentEditables.forEach(element => {
+            const name = element.getAttribute('data-name');
+            if (name && name.trim() !== '') {
+                const key = name.replace(/_/g, ' ');
+                jsonData[key] = element.textContent.trim();
+            }
+        });
         
         // Get the code from the URL
         const urlParams = new URLSearchParams(window.location.search);
