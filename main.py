@@ -1,7 +1,5 @@
 from flask import Flask, render_template, request, jsonify
 import shelve
-import os
-import threading
 import discord
 from discord.ext import commands
 from discord import app_commands
@@ -115,9 +113,6 @@ async def send_confirmation_message(user_id):
     channel = bot.get_channel(837786954128687157)
     await channel.send(f"User with ID {user_id} has successfully authorized.")
 
-def run_flask():
-  app.run(host='0.0.0.0', port=80, debug=True)
-
 ##### BOT #####
 
 
@@ -151,6 +146,6 @@ async def on_ready():
     print(f'Logged in as {bot.user}! Commands synced.')
 
 if __name__ == "__main__":
-  threading.Thread(target=run_flask).start()
+  app.run(host='0.0.0.0', port=80, threaded=True, debug=True)
   bot.run('MTI3MjU4NDYzNTY3NDUzMDAwNQ.GyCbE7.CpA43YTQuY7Xve7SScg-HHu_Ku_6yZlBb5ip1I')
   
