@@ -47,6 +47,7 @@ def form():
   items = get('items')
   content = ""
   for item in items:
+    item["label"] = item["label"].replace(" ", "_")
     if item["type"] == "text":
       content += text.format(item["label"], item["label"])
     elif item["type"] == "textbox":
@@ -125,6 +126,7 @@ def submit():
     # Process the form data here
     # For example, you can print it or save it to a database
     print(data)
+    print(data["code"])
     
     # You can perform any necessary actions with the data here
     
