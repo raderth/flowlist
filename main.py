@@ -80,7 +80,8 @@ REDIRECT_URI = "http://143.47.234.184/"
 @app.route('/')
 def oauth_callback():
     code = request.args.get('code')
-    print(code)
+    if not code:
+       return redirect("http://143.47.234.184/", code=302)
 
     # Exchange the code for a token
     data = {
@@ -134,17 +135,20 @@ async def process_message_queue():
         try:
             data = message_queue.get_nowait()
             print(data)
-            await send_confirmation_message(data['code'])
+            await send_confirmation_message(data)
         except queue.Empty:
             await asyncio.sleep(1)
     
-async def send_confirmation_message(user_id):
+async def send_confirmation_message(data):
     guild_id = 837786954128687154
     guild = discord.utils.get(bot.guilds, id=guild_id)
     for member in guild.members:
-        if int(member.id) == int(user_id):
+        if int(member.id) == int(data['user_id']):
             embed = discord.Embed(title="Confirmation", description=f"Your application has been submitted and is being carefully reviewed", color=0xffa500)  # Orange color
             await member.send(embed=embed)
+
+    for key, value in data.items():
+      embed.add_field(name=key, value=value, inline=False)
 
 ##### BOT #####
 
