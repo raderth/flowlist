@@ -74,7 +74,8 @@ REDIRECT_URI = "http://143.47.234.184/"
 @app.route('/')
 def oauth_callback():
     code = request.args.get('code')
-    
+    print(code)
+
     # Exchange the code for a token
     data = {
         'client_id': CLIENT_ID,
@@ -87,6 +88,7 @@ def oauth_callback():
         'Content-Type': 'application/x-www-form-urlencoded'
     }
     response = requests.post('https://discord.com/api/oauth2/token', data=data, headers=headers)
+    print(response.status_code)
 
     if response.status_code == 200:
         token_info = response.json()
@@ -96,7 +98,7 @@ def oauth_callback():
         user_response = requests.get('https://discord.com/api/users/@me', headers={
             'Authorization': f'Bearer {access_token}'
         })
-
+        print(user_response.status_code)
         if user_response.status_code == 200:
             user_info = user_response.json()
             user_id = user_info['id']
@@ -111,8 +113,11 @@ def oauth_callback():
         return "Authorization failed."
     
 async def send_confirmation_message(user_id):
-    channel = bot.get_channel(837786954128687157)
-    await channel.send(f"User with ID {user_id} has successfully authorized.")
+    guild_id = 837786954128687154
+    guild = discord.utils.get(bot.guilds, id=guild_id)
+    for member in guild.members:
+        if member.id == user_id:
+            await member.send(f"Hello! Your user id is: {user_id}")
 
 ##### BOT #####
 
