@@ -6,6 +6,8 @@ from discord import app_commands
 from discord.ui import Button, View
 import requests
 import threading
+import queue
+message_queue = queue.Queue()
 
 intents = discord.Intents.default()
 bot = commands.Bot(command_prefix="!", intents=intents)
