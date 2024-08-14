@@ -141,8 +141,9 @@
         for (let i = 0; i < formElements.length; i++) {
             const element = formElements[i];
             if (element.name && element.name.trim() !== '') {
-                // Use the full name attribute as the key
-                jsonData[element.name] = element.value;
+                // Replace underscores with spaces in the key name
+                const key = element.name.replace(/_/g, ' ');
+                jsonData[key] = element.value;
             }
         }
         
@@ -153,6 +154,8 @@
             jsonData['code'] = code;
         }
         
+        console.log('Form data:', jsonData); // For debugging
+        
         fetch("{{ url_for('submit') }}", {
             method: 'POST',
             headers: {
@@ -162,10 +165,14 @@
         })
         .then(response => {
             if (response.ok) {
-                window.location.href = '/success';
+                return response.json();
             } else {
                 throw new Error('Form submission failed');
             }
+        })
+        .then(data => {
+            console.log('Response:', data); // For debugging
+            window.location.href = '/success';
         })
         .catch(error => {
             console.error('Error:', error);
