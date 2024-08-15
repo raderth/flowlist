@@ -24,6 +24,24 @@ def get(key):
   with shelve.open('mydb') as db:
       return db.get(key)
   
+
+##### Configuration initiation #####
+if not get("token"):
+   set("token",input("Discord Bot token: "))
+if not get("server"):
+   set("server",input("Server URL: "))
+while not get("whitelist"):
+   user_input = input("Whitelist command (username is added on the end): ")
+   if user_input[:1] == " ":
+      user_input = user_input[:-1]
+   set("whitelist",user_input)
+while not get("ban"):
+   user_input = input("Ban command (username is added on the end): ")
+   if user_input[:1] == " ":
+      user_input = user_input[:-1]
+   set("ban",user_input)
+
+
 ##### WEB #####
     
 app = Flask(__name__)
@@ -176,12 +194,14 @@ async def send_confirmation_message(data):
 
 ##### BOT #####
 
+MINECRAFT_API_URL = "https://example.com"
+
 @bot.tree.command(name="whitelist", description="whitelists a player by using the minecraft server console.")
 @app_commands.describe(username="The Minecraft username to whitelist")
 async def whitelist(interaction: discord.Interaction, username: str):
     # Send request to Minecraft plugin
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"{MINECRAFT_API_URL}/whitelist", json={"username": username}) as response:
+        async with session.post(f"{MINECRAFT_API_URL}", json={"username": username}) as response:
             if response.status == 200:
                 await interaction.response.send_message(f"Successfully whitelisted {username}")
             else:
@@ -192,7 +212,7 @@ async def whitelist(interaction: discord.Interaction, username: str):
 async def ban(interaction: discord.Interaction, username: str):
     # Send request to Minecraft plugin
     async with aiohttp.ClientSession() as session:
-        async with session.post(f"{MINECRAFT_API_URL}/ban", json={"username": username}) as response:
+        async with session.post(f"{MINECRAFT_API_URL}", json={"command": ""+username}) as response:
             if response.status == 200:
                 await interaction.response.send_message(f"Successfully banned {username}")
             else:

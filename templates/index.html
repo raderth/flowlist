@@ -130,58 +130,40 @@
 
     document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
-    form.addEventListener('submit', function(e) {
-        e.preventDefault();
-        
-        const jsonData = {};
-        
-        // Handle all elements with a name attribute, including contenteditable spans
-        const namedElements = form.querySelectorAll('[name]');
-        namedElements.forEach(element => {
-            if (element.name && element.name.trim() !== '') {
+
+    form.addEventListener('submit', function(event) {
+        event.preventDefault();
+
+        let formData = {};
+        const elements = form.querySelectorAll('input, span');
+
+        elements.forEach(element => {
+            if (element.name) {
                 const key = element.name.replace(/_/g, ' ');
-                if (element.tagName.toLowerCase() === 'span' && element.getAttribute('contenteditable') !== null) {
-                    // For contenteditable spans, use textContent
-                    jsonData[key] = element.textContent.trim();
-                } else {
-                    // For other input elements, use value
-                    jsonData[key] = element.value;
-                }
+                const value = element.tagName.toLowerCase() === 'input' ? element.value : element.textContent.trim();
+                formData[key] = value;
             }
         });
-        
-        // Get the code from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        if (code) {
-            jsonData['code'] = code;
-        }
-        
-        console.log('Form data:', jsonData); // For debugging
-        
-        fetch("{{ url_for('submit') }}", {
+
+        fetch('{{ url_for("submit") }}', {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(jsonData),
+            body: JSON.stringify(formData),
         })
-        .then(response => {
-            if (response.ok) {
-                return response.json();
-            } else {
-                throw new Error('Form submission failed');
-            }
-        })
+        .then(response => response.json())
         .then(data => {
-            console.log('Response:', data); // For debugging
-            window.location.href = '/success';
+            console.log('Success:', data);
+            // Handle the response here
         })
-        .catch(error => {
+        .catch((error) => {
             console.error('Error:', error);
-            alert('An error occurred while submitting the form.');
+            // Handle errors here
         });
     });
 });
+
+    
 </script>
 </html>
