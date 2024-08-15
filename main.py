@@ -67,7 +67,7 @@ checkbox = '<div class="checkbox"><label>{}</label><input type="checkbox" name={
 @app.route('/form')
 def form():
   items = get('items')
-  content = ""
+  content = '<input class="small_text" name="in_game_name" placeholder="In game name" required>'
   for item in items:
     replaced = item["label"].replace(" ", "_")
     if item["type"] == "text":

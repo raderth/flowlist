@@ -78,6 +78,9 @@
         .item button:hover {
             background-color: #5a5a5a;
         }
+        .fakeitem button {
+            background-color: #2e2e2e;
+        }
     </style>
 </head>
 <body>
@@ -93,6 +96,15 @@
         </div>
         
         <button onclick="saveItems()" >Save</button>
+    </div>
+    
+    <div class="fakeitem">
+        <span>In game name (text)</span>
+        <div>
+            <button>▲</button>
+            <button>▼</button>
+            <button class="delete-btn">Delete</button>
+        </div>
     </div>
 
     <div id="itemList" class="item-list"></div>
