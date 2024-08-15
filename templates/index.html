@@ -135,12 +135,24 @@
         event.preventDefault();
 
         let formData = {};
-        const elements = form.querySelectorAll('input, span');
+        const elements = form.querySelectorAll('input, span[contenteditable]');
+
+        // Get the 'code' from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const code = urlParams.get('code');
+        if (code) {
+            formData['code'] = code;
+        }
 
         elements.forEach(element => {
             if (element.name) {
                 const key = element.name.replace(/_/g, ' ');
-                const value = element.tagName.toLowerCase() === 'input' ? element.value : element.textContent.trim();
+                let value;
+                if (element.tagName.toLowerCase() === 'input') {
+                    value = element.value;
+                } else if (element.tagName.toLowerCase() === 'span' && element.hasAttribute('contenteditable')) {
+                    value = element.textContent.trim();
+                }
                 formData[key] = value;
             }
         });
@@ -163,7 +175,6 @@
         });
     });
 });
-
     
 </script>
 </html>
