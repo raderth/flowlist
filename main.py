@@ -8,6 +8,8 @@ import requests
 import threading
 import queue
 import asyncio
+import aiohttp
+
 message_queue = queue.Queue()
 
 intents = discord.Intents.default()
@@ -173,6 +175,28 @@ async def send_confirmation_message(data):
     await channel.send(embed=embed, view=view)
 
 ##### BOT #####
+
+@bot.tree.command(name="whitelist", description="whitelists a player by using the minecraft server console.")
+@app_commands.describe(username="The Minecraft username to whitelist")
+async def whitelist(interaction: discord.Interaction, username: str):
+    # Send request to Minecraft plugin
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{MINECRAFT_API_URL}/whitelist", json={"username": username}) as response:
+            if response.status == 200:
+                await interaction.response.send_message(f"Successfully whitelisted {username}")
+            else:
+                await interaction.response.send_message(f"Failed to whitelist {username}")
+
+@bot.tree.command(name="ban", description="bans a player by using the minecraft server console.")
+@app_commands.describe(username="The Minecraft username to ban")
+async def ban(interaction: discord.Interaction, username: str):
+    # Send request to Minecraft plugin
+    async with aiohttp.ClientSession() as session:
+        async with session.post(f"{MINECRAFT_API_URL}/ban", json={"username": username}) as response:
+            if response.status == 200:
+                await interaction.response.send_message(f"Successfully banned {username}")
+            else:
+                await interaction.response.send_message(f"Failed to ban {username}")
 
 
 @bot.tree.command(name="embed_with_button", description="Sends an embed with a button.")
