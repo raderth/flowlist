@@ -9,9 +9,10 @@ import threading
 import queue
 import asyncio
 import aiohttp
+import json
 
 message_queue = queue.Queue()
-
+APPLICATIONS_KEY = "applications"
 intents = discord.Intents.default()
 intents.members = True
 bot = commands.Bot(command_prefix="!", intents=intents)
@@ -26,10 +27,11 @@ def get(key):
   
 
 ##### Configuration initiation #####
-if not get("token"):
-   set("token",input("Discord Bot token: "))
+refresh_commands = False
 if not get("server"):
-   set("server",input("Server URL: "))
+   set("server",input("Minecraft server URL: "))
+   refresh_commands = True
+
 while not get("whitelist"):
    user_input = input("Whitelist command (username is added on the end): ")
    if user_input[:1] == " ":
@@ -159,38 +161,79 @@ async def process_message_queue():
         except queue.Empty:
             await asyncio.sleep(1)
     
+class ApplicationView(View):
+    def __init__(self, data, message_id):
+        super().__init__(timeout=None)
+        self.data = data
+        self.message_id = message_id
+
+    @discord.ui.button(label="Accept", style=discord.ButtonStyle.green, custom_id="accept")
+    async def accept_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.handle_response(interaction, "Accepted", discord.Color.green())
+        await self.send_post_request(self.data, "accepted")
+
+    @discord.ui.button(label="Deny", style=discord.ButtonStyle.red, custom_id="deny")
+    async def deny_button(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await self.handle_response(interaction, "Denied", discord.Color.red())
+        await self.send_post_request(self.data, "denied")
+
+    async def handle_response(self, interaction, status, color):
+        player_name = self.data.get('name', 'Player')
+        response_embed = discord.Embed(title=f"{status}!", description=f"{player_name} was {status.lower()}!", color=color)
+        await interaction.response.edit_message(embed=response_embed, view=None)
+        
+        # Remove the application from the database
+        applications = json.loads(get(APPLICATIONS_KEY) or '{}')
+        applications.pop(str(self.message_id), None)
+        set(APPLICATIONS_KEY, json.dumps(applications))
+
+    async def send_post_request(self, data, status):
+        json_data = {**data, "status": status}
+        print(f"Sending POST request with data: {json.dumps(json_data)}")
+        # Implement actual HTTP POST request here
+
 async def send_confirmation_message(data):
     guild_id = 837786954128687154
     guild = discord.utils.get(bot.guilds, id=guild_id)
+    
     for member in guild.members:
         if int(member.id) == int(data['code']):
-            embed = discord.Embed(title="Confirmation", description=f"Your application has been submitted and is being carefully reviewed", color=0xffa500)  # Orange color
+            embed = discord.Embed(title="Confirmation", description="Your application has been submitted and is being carefully reviewed", color=0xffa500)
             await member.send(embed=embed)
-
+    
     embed = discord.Embed(title="Application")
     for key, value in data.items():
         embed.add_field(name=key, value=value, inline=False)
-
-    button = Button(label="Accept", style=discord.ButtonStyle.green)
-    button2 = Button(label="Deny", style=discord.ButtonStyle.red)
-
-    async def button_callback(interaction):
-        response_embed = discord.Embed(title="Accepted!", description="player name was accepted!", color=discord.Color.green())
-        await interaction.response.edit_message(embed=response_embed, view=None)
-
-    async def button2_callback(interaction):
-        response_embed = discord.Embed(title="Denied!", description="player name was denied!", color=discord.Color.red())
-        await interaction.response.edit_message(embed=response_embed, view=None)
-
-    button.callback = button_callback
-    button2.callback = button2_callback
-
-    view = View()
-    view.add_item(button)
-    view.add_item(button2)
-
+    
     channel = bot.get_channel(837786954128687157)
-    await channel.send(embed=embed, view=view)
+    message = await channel.send(embed=embed)
+    
+    view = ApplicationView(data, message.id)
+    await message.edit(view=view)
+    
+    # Store the application data in the database
+    applications = json.loads(get(APPLICATIONS_KEY) or '{}')
+    applications[str(message.id)] = data
+    set(APPLICATIONS_KEY, json.dumps(applications))
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
+    
+    # Recreate views for existing applications
+    applications = json.loads(get(APPLICATIONS_KEY) or '{}')
+    
+    for message_id, data in applications.items():
+        channel = bot.get_channel(837786954128687157)
+        try:
+            message = await channel.fetch_message(int(message_id))
+            view = ApplicationView(data, int(message_id))
+            await message.edit(view=view)
+        except discord.NotFound:
+            # Message no longer exists, remove from database
+            applications.pop(message_id, None)
+    
+    set(APPLICATIONS_KEY, json.dumps(applications))
 
 ##### BOT #####
 
@@ -218,34 +261,10 @@ async def ban(interaction: discord.Interaction, username: str):
             else:
                 await interaction.response.send_message(f"Failed to ban {username}")
 
-
-@bot.tree.command(name="embed_with_button", description="Sends an embed with a button.")
-async def embed_with_button(interaction: discord.Interaction):
-    embed = discord.Embed(title="Example Application", description="This is an embed with a button and stuff.")
-
-    button = Button(label="Accept", style=discord.ButtonStyle.green)
-    button2 = Button(label="Deny", style=discord.ButtonStyle.red)
-
-    async def button_callback(interaction):
-        response_embed = discord.Embed(title="Accepted!", description="player name was accepted!", color=discord.Color.green())
-        await interaction.response.edit_message(embed=response_embed, view=None)
-        
-    async def button2_callback(interaction):
-        response_embed = discord.Embed(title="Denied!", description="player name was denied!", color=discord.Color.red())
-        await interaction.response.edit_message(embed=response_embed,view=None)
-
-    button.callback = button_callback
-    button2.callback = button2_callback
-
-    view = View()
-    view.add_item(button)
-    view.add_item(button2)
-
-    await interaction.response.send_message(embed=embed, view=view)
-
 @bot.event
 async def on_ready():
-    #await bot.tree.sync()
+    if refresh_commands:
+        await bot.tree.sync()
     print(f'Logged in as {bot.user}! Commands synced.')
     bot.loop.create_task(process_message_queue())
 
