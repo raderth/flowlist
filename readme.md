@@ -14,7 +14,9 @@
 <li>/whitelist</li>
 <li>/ban</li>
 </ul>
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
+
 <hr>
 <h1>Setup</h1>
 <h2>requirements</h2>
