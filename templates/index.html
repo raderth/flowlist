@@ -95,7 +95,7 @@
     });
 });
 
-    document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
 
     form.addEventListener('submit', function(event) {
@@ -115,8 +115,11 @@
             if (element.name) {
                 const key = element.name.replace(/_/g, ' ');
                 let value;
-                if (element.tagName.toLowerCase() === 'input') {
+                if (element.type === 'checkbox') {
+                    value = element.checked;
+                } else {
                     value = element.value;
+                }
                 formData[key] = value;
             }
         });

@@ -277,7 +277,8 @@ async def on_ready():
             await message.edit(view=view)
         except discord.NotFound:
             # Message no longer exists, remove from database
-            applications.pop(message_id, None)
+            with shelve.open('mydb') as db:
+                del db[message_id]
     
     set(APPLICATIONS_KEY, json.dumps(applications))
 
