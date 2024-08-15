@@ -1,17 +1,17 @@
 <h1 style="font-size: larger;">--- UNDER CONSTRUCTION ---</h1>
 
-![header](https://github.com/raderth/flowlist/blob/main/header.png?raw=true)
+![header](https://github.com/raderth/flowlist/blob/main/images/header.png?raw=true)
 
 <h1>Description</h1>
 <p>Flowlist makes whitelisting easy for moderators and owners</p>
 <p>Most interactions will take place with a discord bot.</p>
 <p>You can edit the application form through an admin panel...</p>
 
-![confirm](https://github.com/raderth/flowlist/blob/main/confirmation.png?raw=true)
+![confirm](https://github.com/raderth/flowlist/blob/main/images/confirmation.png?raw=true)
 
 <p>The bot will inform users once they successfully submit an application...</p>
 
-![form](https://github.com/raderth/flowlist/blob/main/form.png?raw=true)
+![form](https://github.com/raderth/flowlist/blob/main/images/form.png?raw=true)
 
 <p>and the details will be sent to a channel of your choosing</p>
 <div style="display: flex; justify-content: center; margin-top: 2rem;"><img src="" alt="image of application embed"></div>
