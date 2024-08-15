@@ -266,6 +266,21 @@ async def on_ready():
     if refresh_commands:
         await bot.tree.sync()
     print(f'Logged in as {bot.user}! Commands synced.')
+    # Recreate views for existing applications
+    applications = json.loads(get(APPLICATIONS_KEY) or '{}')
+    
+    for message_id, data in applications.items():
+        channel = bot.get_channel(837786954128687157)
+        try:
+            message = await channel.fetch_message(int(message_id))
+            view = ApplicationView(data, int(message_id))
+            await message.edit(view=view)
+        except discord.NotFound:
+            # Message no longer exists, remove from database
+            applications.pop(message_id, None)
+    
+    set(APPLICATIONS_KEY, json.dumps(applications))
+
     bot.loop.create_task(process_message_queue())
 
 def run_bot():
