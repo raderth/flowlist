@@ -64,31 +64,16 @@
         .text {
             height: 4rem;
         }
-        .textarea {
-            display: inline-block;
-            word-wrap: break-word;
-            width: 100%;
-            overflow-y: hidden;
-            max-height: 20vh;
-            position: relative;
-        }
-        .textarea::before {
-            content: attr(placeholder);
-            color: #999;
-            position: absolute;
-            pointer-events: none;
-            opacity: 1;
-            transition: opacity 0.3s ease;
-        }
-        .textarea.has-content::before {
-            opacity: 0;
-        }
         .checkbox {
             justify-items: center;
             display: grid;
         }
         .checkbox input {
             min-height: 1.5rem;
+        }
+        .textarea {
+            resize: none;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -103,30 +88,12 @@
     </div>
 </body>
 <script>
-    const editableSpans = document.querySelectorAll('span[contenteditable]');
-    editableSpans.forEach(span => {
-        span.addEventListener('paste', (event) => {
-            event.preventDefault();
-            const text = event.clipboardData.getData('text/plain');
-            document.execCommand('insertText', false, text);
-        });
-
-        span.addEventListener('input', () => {
-            updatePlaceholder(span);
-        });
-
-        span.addEventListener('blur', () => {
-            updatePlaceholder(span);
-        });
+    document.querySelectorAll('.textarea').forEach(function (textarea) {
+    textarea.addEventListener('input', function () {
+        this.style.height = 'auto';
+        this.style.height = this.scrollHeight + 'px';
     });
-
-    function updatePlaceholder(element) {
-        if (element.textContent.trim() !== '') {
-            element.classList.add('has-content');
-        } else {
-            element.classList.remove('has-content');
-        }
-    }
+});
 
     document.addEventListener('DOMContentLoaded', function() {
     const form = document.querySelector('form');
@@ -135,7 +102,7 @@
         event.preventDefault();
 
         let formData = {};
-        const elements = form.querySelectorAll('input, span[contenteditable]');
+        const elements = form.querySelectorAll('input');
 
         // Get the 'code' from the URL
         const urlParams = new URLSearchParams(window.location.search);
@@ -150,9 +117,6 @@
                 let value;
                 if (element.tagName.toLowerCase() === 'input') {
                     value = element.value;
-                } else if (element.tagName.toLowerCase() === 'span' && element.hasAttribute('contenteditable')) {
-                    value = element.textContent.trim();
-                }
                 formData[key] = value;
             }
         });

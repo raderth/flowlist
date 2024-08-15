@@ -61,7 +61,7 @@ def save_items():
     return "<h1>404 not found</h1>"
 
 text = '<input class="small_text" name={} placeholder="{}" required>'
-textbox = '<span name={} placeholder="{}" class="textarea" role="textbox" contenteditable></span>'
+textbox = '<textarea class="textarea" name="{}" placeholder="{}" rows="1" style="resize: none; overflow: hidden;"></textarea>'
 checkbox = '<div class="checkbox"><label>{}</label><input type="checkbox" name={} /></div>'
 
 @app.route('/form')
