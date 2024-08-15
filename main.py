@@ -263,8 +263,8 @@ async def ban(interaction: discord.Interaction, username: str):
 
 @bot.event
 async def on_ready():
-    if refresh_commands:
-        await bot.tree.sync()
+    #if refresh_commands:
+    await bot.tree.sync()
     print(f'Logged in as {bot.user}! Commands synced.')
     bot.loop.create_task(process_message_queue())
 
