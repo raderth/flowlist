@@ -3,7 +3,7 @@
 ![header](https://github.com/raderth/flowlist/blob/main/images/header.png?raw=true)
 
 <h1>Description</h1>
-<p>Flowlist makes whitelisting easy for moderators and owners</p>
+<p>Flowlist makes whitelisting easy for moderators and owners by integrating an application form with discord and then minecraft</p>
 <p>Most interactions will take place with a discord bot.</p>
 <p>You can edit the application form through an admin panel...</p>
 
