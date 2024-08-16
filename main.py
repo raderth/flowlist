@@ -265,7 +265,10 @@ async def set_role_error(interaction: discord.Interaction, error: app_commands.A
 def has_managed_role():
     async def predicate(interaction: discord.Interaction):
         user_roles = [role.id for role in interaction.user.roles]
-        return any(role_id in get("managed_roles") for role_id in user_roles)
+        try:
+          return any(role_id in get("managed_roles") for role_id in user_roles)
+        except:
+          pass
     return app_commands.check(predicate)
 
 MINECRAFT_API_URL = get("server")
