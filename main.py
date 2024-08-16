@@ -206,6 +206,10 @@ async def send_confirmation_message(data):
         if int(member.id) == int(data['code']):
             embed = discord.Embed(title="Confirmation", description="Your application has been submitted and is being carefully reviewed", color=0xffa500)
             await member.send(embed=embed)
+
+    links = get("links")
+    links[data['code']] = data['In game name']
+    set("links", links)
     
     embed = discord.Embed(title="Application")
     for key, value in data.items():
@@ -221,6 +225,38 @@ async def send_confirmation_message(data):
     applications = json.loads(get(APPLICATIONS_KEY) or '{}')
     applications[str(message.id)] = data
     set(APPLICATIONS_KEY, json.dumps(applications))
+
+class RoleSelect(discord.ui.Select):
+    def __init__(self, roles):
+        options = [discord.SelectOption(label=role.name, value=str(role.id)) for role in roles]
+        super().__init__(placeholder="Select a role", max_values=1, min_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        role_id = int(self.values[0])
+        role = interaction.guild.get_role(role_id)
+        
+        set("role", role_id)
+        
+        await interaction.response.send_message(f"Role '{role.name}' has been set in the database.", ephemeral=True)
+
+class RoleView(discord.ui.View):
+    def __init__(self, roles):
+        super().__init__()
+        self.add_item(RoleSelect(roles))
+
+@bot.tree.command(name="role", description="Set a role in the database (Admin only)")
+@app_commands.checks.has_permissions(administrator=True)
+async def set_role(interaction: discord.Interaction):
+    roles = interaction.guild.roles[1:]  # Exclude @everyone role
+    view = RoleView(roles)
+    await interaction.response.send_message("Please select a role to set:", view=view, ephemeral=True)
+
+@set_role.error
+async def set_role_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    if isinstance(error, app_commands.errors.MissingPermissions):
+        await interaction.response.send_message("You don't have permission to use this command. Only administrators can set roles.", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"An error occurred: {str(error)}", ephemeral=True)
 
 def has_managed_role():
     async def predicate(interaction: discord.Interaction):
@@ -284,6 +320,7 @@ class ChannelView(discord.ui.View):
         self.add_item(ChannelSelect(channels))
 
 @bot.tree.command(name="set", description="Sets the channel for applications")
+@app_commands.checks.has_permissions(administrator=True)
 async def get_ids(interaction: discord.Interaction):
     channels = interaction.guild.text_channels
     view = ChannelView(channels)
@@ -292,8 +329,8 @@ async def get_ids(interaction: discord.Interaction):
 @bot.tree.command(name="add", description="Add a role to the managed list")
 @app_commands.checks.has_permissions(administrator=True)
 async def add_role(interaction: discord.Interaction, role: discord.Role):
-    if role.id not in managed_roles:
-        managed_roles.append(role.id)
+    if role.id not in get("managed_roles"):
+        set("managed_roles",get("managed_roles").append(role.id))
         await interaction.response.send_message(f"Added {role.name} to the managed roles list.")
     else:
         await interaction.response.send_message(f"{role.name} is already in the managed roles list.")
@@ -301,8 +338,8 @@ async def add_role(interaction: discord.Interaction, role: discord.Role):
 @bot.tree.command(name="remove", description="Remove a role from the managed list")
 @app_commands.checks.has_permissions(administrator=True)
 async def remove_role(interaction: discord.Interaction, role: discord.Role):
-    if role.id in managed_roles:
-        managed_roles.remove(role.id)
+    if role.id in get("managed_roles"):
+        set("managed_roles",get("managed_roles").remove(role.id))
         await interaction.response.send_message(f"Removed {role.name} from the managed roles list.")
     else:
         await interaction.response.send_message(f"{role.name} is not in the managed roles list.")
