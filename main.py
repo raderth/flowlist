@@ -43,6 +43,10 @@ if not get("ban"):
    set("ban",user_input)
 if not get("token"):
    set("token", input("Discord bot token: "))
+if not get("secret"):
+   set("secret", input("Discord client secret: "))
+if not get("client_id"):
+   set("client_id", input("Bot's client ID: "))
 
 if not get("managed_roles"):
     set("managed_roles", [])
@@ -98,9 +102,9 @@ def admin():
         return jsonify({"status": "error", "message": "Invalid credentials"}), 401
   return render_template("admin.html")
 
-CLIENT_ID = "1272584635674530005"
-CLIENT_SECRET = "rs54yY5bxPimT_56hlm0Uw-R2vuWRxR4"
-REDIRECT_URI = "http://143.47.234.184/"
+CLIENT_ID = get("client_id")
+CLIENT_SECRET = get("secret")
+REDIRECT_URI = url_for('oauth_callback', _external=True)
 
 @app.route('/')
 def oauth_callback():
