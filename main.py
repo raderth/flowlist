@@ -31,18 +31,21 @@ refresh_commands = False
 if not get("server"):
    set("server",input("Minecraft server URL: "))
    refresh_commands = True
-
-while not get("whitelist"):
-   user_input = input("Whitelist command (username is added on the end): ")
+if not get("whitelist"):
+   user_input = input("Whitelist command (username is added on the end later): ")
    if user_input[:1] == " ":
       user_input = user_input[:-1]
    set("whitelist",user_input)
-while not get("ban"):
-   user_input = input("Ban command (username is added on the end): ")
+if not get("ban"):
+   user_input = input("Ban command (username is added on the end later): ")
    if user_input[:1] == " ":
       user_input = user_input[:-1]
    set("ban",user_input)
+if not get("token"):
+   set("token", input("Discord bot token: "))
 
+if not get("managed_roles"):
+    set("managed_roles", [])
 
 ##### WEB #####
     
@@ -152,6 +155,9 @@ def submit():
 def success():
     return "Success"
 
+
+##### BOT #####
+
 async def process_message_queue():
     while True:
         try:
@@ -193,7 +199,7 @@ class ApplicationView(View):
         # Implement actual HTTP POST request here
 
 async def send_confirmation_message(data):
-    guild_id = 837786954128687154
+    guild_id = get("guild")
     guild = discord.utils.get(bot.guilds, id=guild_id)
     
     for member in guild.members:
@@ -205,7 +211,7 @@ async def send_confirmation_message(data):
     for key, value in data.items():
         embed.add_field(name=key, value=value, inline=False)
     
-    channel = bot.get_channel(837786954128687157)
+    channel = bot.get_channel(get("channel"))
     message = await channel.send(embed=embed)
     
     view = ApplicationView(data, message.id)
@@ -216,31 +222,17 @@ async def send_confirmation_message(data):
     applications[str(message.id)] = data
     set(APPLICATIONS_KEY, json.dumps(applications))
 
-@bot.event
-async def on_ready():
-    print(f'{bot.user} has connected to Discord!')
-    
-    # Recreate views for existing applications
-    applications = json.loads(get(APPLICATIONS_KEY) or '{}')
-    
-    for message_id, data in applications.items():
-        channel = bot.get_channel(837786954128687157)
-        try:
-            message = await channel.fetch_message(int(message_id))
-            view = ApplicationView(data, int(message_id))
-            await message.edit(view=view)
-        except discord.NotFound:
-            # Message no longer exists, remove from database
-            applications.pop(message_id, None)
-    
-    set(APPLICATIONS_KEY, json.dumps(applications))
+def has_managed_role():
+    async def predicate(interaction: discord.Interaction):
+        user_roles = [role.id for role in interaction.user.roles]
+        return any(role_id in get("managed_roles") for role_id in user_roles)
+    return app_commands.check(predicate)
 
-##### BOT #####
+MINECRAFT_API_URL = get("server")
 
-MINECRAFT_API_URL = "https://example.com"
-
-@bot.tree.command(name="whitelist", description="whitelists a player by using the minecraft server console.")
+@bot.tree.command(name="whitelist", description="Whitelists a player by using the Minecraft server console.")
 @app_commands.describe(username="The Minecraft username to whitelist")
+@has_managed_role()
 async def whitelist(interaction: discord.Interaction, username: str):
     # Send request to Minecraft plugin
     async with aiohttp.ClientSession() as session:
@@ -252,6 +244,7 @@ async def whitelist(interaction: discord.Interaction, username: str):
 
 @bot.tree.command(name="ban", description="bans a player by using the minecraft server console.")
 @app_commands.describe(username="The Minecraft username to ban")
+@has_managed_role()
 async def ban(interaction: discord.Interaction, username: str):
     # Send request to Minecraft plugin
     async with aiohttp.ClientSession() as session:
@@ -260,6 +253,67 @@ async def ban(interaction: discord.Interaction, username: str):
                 await interaction.response.send_message(f"Successfully banned {username}")
             else:
                 await interaction.response.send_message(f"Failed to ban {username}")
+
+@whitelist.error
+async def whitelist_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    if isinstance(error, app_commands.errors.CheckFailure):
+        await interaction.response.send_message("You don't have permission to use this command.", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"An error occurred: {str(error)}", ephemeral=True)
+
+@ban.error
+async def whitelist_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    if isinstance(error, app_commands.errors.CheckFailure):
+        await interaction.response.send_message("You don't have permission to use this command.", ephemeral=True)
+    else:
+        await interaction.response.send_message(f"An error occurred: {str(error)}", ephemeral=True)
+
+class ChannelSelect(discord.ui.Select):
+    def __init__(self, channels):
+        options = [discord.SelectOption(label=channel.name, value=str(channel.id)) for channel in channels]
+        super().__init__(placeholder="Select a channel", max_values=1, min_values=1, options=options)
+
+    async def callback(self, interaction: discord.Interaction):
+        channel_id = int(self.values[0])
+        channel = interaction.guild.get_channel(channel_id)
+        await interaction.response.send_message(f"Channel: {channel.name}\nChannel ID: {channel.id}\nServer ID: {interaction.guild.id}")
+
+class ChannelView(discord.ui.View):
+    def __init__(self, channels):
+        super().__init__()
+        self.add_item(ChannelSelect(channels))
+
+@bot.tree.command(name="set", description="Sets the channel for applications")
+async def get_ids(interaction: discord.Interaction):
+    channels = interaction.guild.text_channels
+    view = ChannelView(channels)
+    await interaction.response.send_message("Please select a channel:", view=view)
+
+@bot.tree.command(name="add", description="Add a role to the managed list")
+@app_commands.checks.has_permissions(administrator=True)
+async def add_role(interaction: discord.Interaction, role: discord.Role):
+    if role.id not in managed_roles:
+        managed_roles.append(role.id)
+        await interaction.response.send_message(f"Added {role.name} to the managed roles list.")
+    else:
+        await interaction.response.send_message(f"{role.name} is already in the managed roles list.")
+
+@bot.tree.command(name="remove", description="Remove a role from the managed list")
+@app_commands.checks.has_permissions(administrator=True)
+async def remove_role(interaction: discord.Interaction, role: discord.Role):
+    if role.id in managed_roles:
+        managed_roles.remove(role.id)
+        await interaction.response.send_message(f"Removed {role.name} from the managed roles list.")
+    else:
+        await interaction.response.send_message(f"{role.name} is not in the managed roles list.")
+
+@add_role.error
+@remove_role.error
+async def role_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+    if isinstance(error, app_commands.errors.MissingPermissions):
+        await interaction.response.send_message("You don't have permission to use this command. Only administrators can manage roles.", ephemeral=True)
+
+
 
 @bot.event
 async def on_ready():
@@ -270,22 +324,21 @@ async def on_ready():
     applications = json.loads(get(APPLICATIONS_KEY) or '{}')
     
     for message_id, data in applications.items():
-        channel = bot.get_channel(837786954128687157)
+        channel = bot.get_channel(get("channel"))
         try:
             message = await channel.fetch_message(int(message_id))
             view = ApplicationView(data, int(message_id))
             await message.edit(view=view)
         except discord.NotFound:
-            # Message no longer exists, remove from database
-            with shelve.open('mydb') as db:
-                del db[message_id]
+            # Message no longer exists, remove
+            applications.pop(message_id, None)
     
     set(APPLICATIONS_KEY, json.dumps(applications))
 
     bot.loop.create_task(process_message_queue())
 
 def run_bot():
-  bot.run('MTI3MjU4NDYzNTY3NDUzMDAwNQ.GyCbE7.CpA43YTQuY7Xve7SScg-HHu_Ku_6yZlBb5ip1I')
+  bot.run(get("token"))
 
 if __name__ == "__main__":
   threading.Thread(target=run_bot).start()
