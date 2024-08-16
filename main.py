@@ -104,10 +104,10 @@ def admin():
 
 CLIENT_ID = get("client_id")
 CLIENT_SECRET = get("secret")
-REDIRECT_URI = url_for('oauth_callback', _external=True)
 
 @app.route('/')
 def oauth_callback():
+    REDIRECT_URI = url_for('oauth_callback', _external=True)
     code = request.args.get('code')
     if not code:
        return redirect("https://discord.com/oauth2/authorize?client_id=1272584635674530005&response_type=code&redirect_uri=http%3A%2F%2F143.47.234.184%2F&scope=identify", code=302)
