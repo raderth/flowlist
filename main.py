@@ -337,7 +337,9 @@ async def get_ids(interaction: discord.Interaction):
 @app_commands.checks.has_permissions(administrator=True)
 async def add_role(interaction: discord.Interaction, role: discord.Role):
     if role.id not in get("managed_roles"):
-        set("managed_roles",get("managed_roles").append(role.id))
+        roles = get("managed_roles")
+        roles.append(role.id)
+        set("managed_roles", roles)
         await interaction.response.send_message(f"Added {role.name} to the managed roles list.")
     else:
         await interaction.response.send_message(f"{role.name} is already in the managed roles list.")
@@ -346,7 +348,9 @@ async def add_role(interaction: discord.Interaction, role: discord.Role):
 @app_commands.checks.has_permissions(administrator=True)
 async def remove_role(interaction: discord.Interaction, role: discord.Role):
     if role.id in get("managed_roles"):
-        set("managed_roles",get("managed_roles").remove(role.id))
+        roles = get("managed_roles")
+        roles.remove(role.id)
+        set("managed_roles", roles)
         await interaction.response.send_message(f"Removed {role.name} from the managed roles list.")
     else:
         await interaction.response.send_message(f"{role.name} is not in the managed roles list.")
