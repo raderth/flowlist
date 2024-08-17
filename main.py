@@ -55,6 +55,13 @@ if not get("client_id"):
 if not get("managed_roles"):
     set("managed_roles", [])
 
+if get("domain") != "":
+   print("Remember to add this url to your redirects: "+"https://"+get("domain")+"/callback")
+else:
+   print("Remember to add this url to your redirects: "+request.host_url+"callback")
+if refresh_commands:
+  print("Did you enter info wrongly prompt")
+
 ##### WEB #####
     
 app = Flask(__name__)
@@ -117,14 +124,14 @@ def get_server_url():
         return f"https://{domain}"
     
     # If no domain is set, use the server's IP
-    ip = request.host_url.rstrip('/')
+    ip = request.host_url.strip('/')
     return f"{ip}"
 
 @app.before_request
 def before_request():
     global REDIRECT_URI
     server_url = get_server_url()
-    REDIRECT_URI = f"{server_url}{url_for('callback')}"
+    REDIRECT_URI = f"{server_url}{url_for('callback')}".strip
 
 @app.route('/')
 def index():
