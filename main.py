@@ -133,8 +133,13 @@ def index():
     if code:
         return redirect(url_for('callback', code=code))
     
-    encoded_redirect_uri = quote(REDIRECT_URI)
-    auth_url = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&response_type=code&redirect_uri={encoded_redirect_uri}&scope=identify"
+    params = {
+        'client_id': CLIENT_ID,
+        'response_type': 'code',
+        'redirect_uri': REDIRECT_URI,
+        'scope': 'identify'
+    }
+    auth_url = f"https://discord.com/oauth2/authorize?{urlencode(params)}"
     return redirect(auth_url)
 
 @app.route('/callback')
