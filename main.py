@@ -347,6 +347,8 @@ class ChannelSelect(discord.ui.Select):
     async def callback(self, interaction: discord.Interaction):
         channel_id = int(self.values[0])
         channel = interaction.guild.get_channel(channel_id)
+        set("channel", channel.id)
+        set("guild", interaction.guild.id)
         await interaction.response.send_message(f"Channel: {channel.name}\nChannel ID: {channel.id}\nServer ID: {interaction.guild.id}")
 
 class ChannelView(discord.ui.View):
