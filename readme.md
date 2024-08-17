@@ -28,6 +28,7 @@
 <hr>
 <h1>Setup</h1>
 <p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 80)</p>
+<p>I'm using linux here. Scroll down for windows</p>
 <h2>requirements</h2>
 <ul>
 <li>A basic server with docker (there are a lot of free ones that will work fine for most people)</li>
@@ -41,7 +42,7 @@
 
 ![redirects](https://github.com/raderth/flowlist/blob/main/images/redirects.png?raw=true)
 
-<h3>Step 3</h3>
+<h3>Step 2</h3>
 Paste these commands into the linux console!
 Install docker, sometimes it's preinstalled but running this wont do any harm
 
@@ -50,7 +51,7 @@ sudo apt-get install -y docker.io
 sudo systemctl start docker
 sudo systemctl enable docker
 ```
-<h3>Step 4</h3>
+<h3>Step 3</h3>
 Download the latest release of flowlist from releases. Then run it!
 
 ```
@@ -58,13 +59,13 @@ wget <release url>
 docker run -it flowlist
 ```
 
-<h3>Step 5</h3>
+<h3>Step 4</h3>
 Complete the configuration as prompted. In discord you need to use <b>/set</b> and <b>/add</b> to set the channel for applications and add to set who can use <b>/whitelist</b> and <b>/ban</b>
 
-<h3>Step 6</h3>
+<h3>Step 5</h3>
 Install the plugin and you should be good to go!
 
-<h3>Step 7</h3>
+<h3>Step 6</h3>
 I lied, to actually setup your form go to <your-ip/url>/admin and login. The default username is admin and password is lGGN2ZEfmL
 yes I'm going to fix that at some point
 
