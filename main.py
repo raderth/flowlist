@@ -111,8 +111,9 @@ def oauth_callback():
     code = request.args.get('code')
     if not code:
        base_url = request.host_url
-       redirect_uri = f"{base_url}"
-       return redirect(f"https://discord.com/oauth2/authorize?client_id=1272584635674530005&response_type=code&redirect_uri={redirect_uri}&scope=identify", code=302)
+       encoded_redirect_uri = quote(base_url, safe='')
+       url = f"https://discord.com/oauth2/authorize?client_id=1272584635674530005&response_type=code&redirect_uri={encoded_redirect_uri}&scope=identify"
+       return redirect(url, code=302)
 
     # Exchange the code for a token
     data = {
