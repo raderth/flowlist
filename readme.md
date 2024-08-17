@@ -64,6 +64,10 @@ Complete the configuration as prompted. In discord you need to use <b>/set</b> a
 <h3>Step 6</h3>
 Install the plugin and you should be good to go!
 
+<h3>Step 7</h3>
+I lied, go to <your-ip/url>/admin and login. the default username is admin and password is lGGN2ZEfmL
+yes I'm going to fix that at some point
+
 <hr>
 Alternatively you can install docker desktop on an old windows machine. If you go into the settings you can make it boot on launch. I'll add more details on this at some point in the future
 
