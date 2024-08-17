@@ -10,6 +10,7 @@ import queue
 import asyncio
 import aiohttp
 import json
+from urllib.parse import quote
 
 message_queue = queue.Queue()
 APPLICATIONS_KEY = "applications"
