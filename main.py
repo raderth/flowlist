@@ -58,7 +58,7 @@ if not get("managed_roles"):
 if get("domain") != "":
    print("Remember to add this url to your redirects: "+"https://"+get("domain")+"/callback")
 else:
-   print("Remember to add this url to your redirects: "+request.host_url+"callback")
+   print("Remember to add this url to your redirects: http://your-public-ip/callback")
 if refresh_commands:
   print("Did you enter info wrongly prompt")
 
