@@ -108,6 +108,7 @@ CLIENT_SECRET = get("secret")
 
 @app.route('/')
 def oauth_callback():
+    base_url = ""
     code = request.args.get('code')
     if not code:
        base_url = request.host_url.rstrip('/')  # Remove the trailing slash
