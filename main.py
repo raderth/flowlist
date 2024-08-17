@@ -51,7 +51,8 @@ if not get("secret"):
    set("secret", input("Discord client secret: "))
 if not get("client_id"):
    set("client_id", input("Bot's client ID: "))
-
+if not get("links"):
+  set("links", {})
 if not get("managed_roles"):
     set("managed_roles", [])
 
