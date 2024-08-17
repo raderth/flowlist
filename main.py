@@ -180,6 +180,7 @@ def callback():
 @app.route('/submit', methods=['POST'])
 def submit():
     data = request.json
+    print(data)
     message_queue.put(data)
     return jsonify({"status": "success"}), 200
 
