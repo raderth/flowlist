@@ -29,6 +29,8 @@ def get(key):
 
 ##### Configuration initiation #####
 refresh_commands = False
+if not get("domain"):
+  set("domain", input("This server's url. example.com (leave blank if using direct ip. Highly Discouraged!): "))
 if not get("server"):
    set("server",input("Minecraft server URL: "))
    refresh_commands = True
@@ -105,53 +107,63 @@ def admin():
 
 CLIENT_ID = get("client_id")
 CLIENT_SECRET = get("secret")
+REDIRECT_URI = ''
+
+def get_server_url():
+    # Try to get the domain from an environment variable
+    domain = os.environ.get('DOMAIN')
+    if domain:
+        return f"https://{domain}"
+    
+    # If no domain is set, use the server's IP
+    import socket
+    ip = socket.gethostbyname(socket.gethostname())
+    return f"http://{ip}"
+
+@app.before_request
+def before_request():
+    global REDIRECT_URI
+    server_url = get_server_url()
+    REDIRECT_URI = f"{server_url}{url_for('callback')}"
 
 @app.route('/')
-def oauth_callback():
-    base_url = ""
+def index():
+    code = request.args.get('code')
+    if code:
+        return redirect(url_for('callback', code=code))
+    
+    encoded_redirect_uri = quote(REDIRECT_URI)
+    auth_url = f"https://discord.com/oauth2/authorize?client_id={CLIENT_ID}&response_type=code&redirect_uri={encoded_redirect_uri}&scope=identify"
+    return redirect(auth_url)
+
+@app.route('/callback')
+def callback():
     code = request.args.get('code')
     if not code:
-       base_url = request.host_url.rstrip('/')  # Remove the trailing slash
-       encoded_redirect_uri = quote(base_url, safe='')
-       url = f"https://discord.com/oauth2/authorize?client_id=1272584635674530005&response_type=code&redirect_uri={encoded_redirect_uri}&scope=identify"
-       return redirect(url, code=302)
+        return "No code provided", 400
 
-    # Exchange the code for a token
     data = {
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': base_url,
+        'redirect_uri': REDIRECT_URI
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
     }
-    response = requests.post('https://discord.com/api/oauth2/token', data=data, headers=headers)
-    print(response.status_code)
+    r = requests.post('https://discord.com/api/oauth2/token', data=data, headers=headers)
+    r.raise_for_status()
+    access_token = r.json()['access_token']
 
-    if response.status_code == 200:
-        token_info = response.json()
-        access_token = token_info['access_token']
+    headers = {
+        'Authorization': f'Bearer {access_token}'
+    }
+    r = requests.get('https://discord.com/api/users/@me', headers=headers)
+    r.raise_for_status()
+    user_id = r.json()['id']
 
-        # Fetch the user's info
-        user_response = requests.get('https://discord.com/api/users/@me', headers={
-            'Authorization': f'Bearer {access_token}'
-        })
-        print(user_response.status_code)
-        if user_response.status_code == 200:
-            user_info = user_response.json()
-            user_id = user_info['id']
-
-            # Send the user ID to your Discord bot
-            #message_queue.put(int(user_id))
-
-
-            return redirect(f"{url_for('form')}?code={user_id}", code=302)
-        else:
-            return "Failed to fetch user information."
-    else:
-        return "Authorization failed."
+    return redirect(f"{url_for('form')}?code={user_id}", code=302)
     
 @app.route('/submit', methods=['POST'])
 def submit():
