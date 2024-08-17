@@ -65,4 +65,7 @@ Complete the configuration as prompted. In discord you need to use <b>/set</b> a
 <h3>Step 6</h3>
 Install the plugin and you should be good to go!
 
+<hr>
+Alternatively you can install docker desktop on an old windows machine. If you go into the settings you can make it boot on launch. I'll add more details on this at some point in the future
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
