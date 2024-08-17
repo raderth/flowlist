@@ -79,14 +79,14 @@ def save_items():
       return render_template('panel.html', items=items or [])
     return "<h1>404 not found</h1>"
 
-text = '<input class="small_text" name={} placeholder="{}" required>'
-textbox = '<textarea class="textarea" name="{}" placeholder="{}" rows="1" style="resize: none; overflow: hidden;"></textarea>'
-checkbox = '<div class="checkbox"><label>{}</label><input type="checkbox" name={} /></div>'
+text = '<input for_json={} class="small_text" placeholder="{}" required>'
+textbox = '<textarea class="textarea" for_json="{}" placeholder="{}" rows="1" style="resize: none; overflow: hidden;"></textarea>'
+checkbox = '<label>{}</label><input for_json={} type="checkbox"/>'
 
 @app.route('/form')
 def form():
   items = get('items')
-  content = '<input class="small_text" name="in_game_name" placeholder="In game name" required>'
+  content = '<input class="small_text" for_json="in_game_name" placeholder="In game name" required>'
   for item in items:
     replaced = item["label"].replace(" ", "_")
     if item["type"] == "text":
