@@ -11,6 +11,7 @@ import asyncio
 import aiohttp
 import json
 from urllib.parse import quote
+import os
 
 message_queue = queue.Queue()
 APPLICATIONS_KEY = "applications"
@@ -29,7 +30,7 @@ def get(key):
 
 ##### Configuration initiation #####
 refresh_commands = False
-if not get("domain"):
+if not get("domain") and get("domain") != '':
   set("domain", input("This server's url. example.com (leave blank if using direct ip. Highly Discouraged!): "))
 if not get("server"):
    set("server",input("Minecraft server URL: "))
