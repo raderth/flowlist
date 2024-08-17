@@ -117,7 +117,7 @@ def get_server_url():
         return f"https://{domain}"
     
     # If no domain is set, use the server's IP
-    ip = request.host_url.strip('/')
+    ip = request.host_url.rstrip('/')
     return f"{ip}"
 
 @app.before_request
