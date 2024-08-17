@@ -14,7 +14,9 @@
 ![form](https://github.com/raderth/flowlist/blob/main/images/form.png?raw=true)
 
 <p>and the details will be sent to a channel of your choosing</p>
-<div style="display: flex; justify-content: center; margin-top: 2rem;"><img src="" alt="image of application embed"></div>
+
+![application](https://github.com/raderth/flowlist/blob/main/images/application.png?raw=true)
+
 <p>Accepting will then add the user to the whitelist in addition to any role you want added</p>
 <p>For conveinience this bot also includes the following commands:</p>
 <ul>
