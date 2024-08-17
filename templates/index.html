@@ -96,51 +96,61 @@
 });
 
 document.addEventListener('DOMContentLoaded', function() {
-    const form = document.querySelector('form');
+  // Function to get URL parameters
+  function getUrlParameter(name) {
+    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+    var results = regex.exec(location.search);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+  }
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
+  // Get the form element (you can change this selector if needed)
+  var form = document.querySelector('form');
 
-        let formData = {};
-        const elements = form.querySelectorAll('input');
+  // Function to gather data and submit
+  function gatherAndSubmit() {
+    var jsonData = {};
 
-        // Get the 'code' from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
-        if (code) {
-            formData['code'] = code;
-        }
+    // Get all elements with for_json attribute
+    var elements = form.querySelectorAll('[for_json]');
 
-        elements.forEach(element => {
-            if (element.name) {
-                const key = element.name.replace(/_/g, ' ');
-                let value;
-                if (element.type === 'checkbox') {
-                    value = element.checked;
-                } else {
-                    value = element.value;
-                }
-                formData[key] = value;
-            }
-        });
+    elements.forEach(function(element) {
+      var key = element.getAttribute('for_json').replace(/_/g, ' ');
+      var value;
 
-        fetch('{{ url_for("submit") }}', {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
-        })
-        .then(response => response.json())
-        .then(data => {
-            console.log('Success:', data);
-            // Handle the response here
-        })
-        .catch((error) => {
-            console.error('Error:', error);
-            // Handle errors here
-        });
+      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+        value = element.value;
+      } else if (element.isContentEditable) {
+        value = element.textContent;
+      }
+
+      jsonData[key] = value;
     });
+
+    // Add the code from URL
+    var code = getUrlParameter('code');
+    if (code) {
+      jsonData['code'] = code;
+    }
+
+    // Post the data
+    fetch(window.location.origin + '/submit', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(jsonData),
+    })
+    .then(response => response.json())
+    .then(data => console.log('Success:', data))
+    .catch((error) => console.error('Error:', error));
+  }
+
+  // Add submit event listener to the form
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    gatherAndSubmit();
+  });
 });
     
 </script>
