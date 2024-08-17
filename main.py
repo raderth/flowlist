@@ -108,7 +108,6 @@ CLIENT_SECRET = get("secret")
 
 @app.route('/')
 def oauth_callback():
-    REDIRECT_URI = url_for('oauth_callback', _external=True)
     code = request.args.get('code')
     if not code:
        base_url = request.host_url.rstrip('/')  # Remove the trailing slash
@@ -122,7 +121,7 @@ def oauth_callback():
         'client_secret': CLIENT_SECRET,
         'grant_type': 'authorization_code',
         'code': code,
-        'redirect_uri': REDIRECT_URI,
+        'redirect_uri': base_url,
     }
     headers = {
         'Content-Type': 'application/x-www-form-urlencoded'
