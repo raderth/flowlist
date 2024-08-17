@@ -241,7 +241,7 @@ async def send_confirmation_message(data):
             await member.send(embed=embed)
 
     links = get("links")
-    links[data['code']] = data['In game name']
+    links[data['code']] = data['in game name']
     set("links", links)
     
     embed = discord.Embed(title="Application")
