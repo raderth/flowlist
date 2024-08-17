@@ -65,7 +65,7 @@ Complete the configuration as prompted. In discord you need to use <b>/set</b> a
 Install the plugin and you should be good to go!
 
 <h3>Step 7</h3>
-I lied, go to <your-ip/url>/admin and login. the default username is admin and password is lGGN2ZEfmL
+I lied, to actually setup your form go to <your-ip/url>/admin and login. The default username is admin and password is lGGN2ZEfmL
 yes I'm going to fix that at some point
 
 <hr>
