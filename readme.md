@@ -45,6 +45,7 @@
 <h3>Step 3</h3>
 Paste these commands into the linux console!
 Install docker, sometimes it's preinstalled but running this wont do any harm
+
 ```
 sudo apt-get install -y docker.io
 sudo systemctl start docker
