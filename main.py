@@ -111,7 +111,7 @@ def oauth_callback():
     REDIRECT_URI = url_for('oauth_callback', _external=True)
     code = request.args.get('code')
     if not code:
-       base_url = request.host_url
+       base_url = request.host_url.rstrip('/')  # Remove the trailing slash
        encoded_redirect_uri = quote(base_url, safe='')
        url = f"https://discord.com/oauth2/authorize?client_id=1272584635674530005&response_type=code&redirect_uri={encoded_redirect_uri}&scope=identify"
        return redirect(url, code=302)
