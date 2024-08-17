@@ -131,7 +131,7 @@ def get_server_url():
 def before_request():
     global REDIRECT_URI
     server_url = get_server_url()
-    REDIRECT_URI = f"{server_url}{url_for('callback')}".strip
+    REDIRECT_URI = f"{server_url}{url_for('callback')}".strip()
 
 @app.route('/')
 def index():
