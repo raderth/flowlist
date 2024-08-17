@@ -10,7 +10,7 @@ import queue
 import asyncio
 import aiohttp
 import json
-from urllib.parse import quote, urlencode
+from urllib.parse import quote, urlencode, urlparse
 import os
 
 message_queue = queue.Queue()
@@ -117,8 +117,7 @@ def get_server_url():
         return f"https://{domain}"
     
     # If no domain is set, use the server's IP
-    import socket
-    ip = socket.gethostbyname(socket.gethostname())
+    ip = urlparse(request.base_url)
     return f"http://{ip}"
 
 @app.before_request
