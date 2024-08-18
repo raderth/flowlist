@@ -97,69 +97,74 @@
 </body>
 <script>
     document.querySelectorAll('.textarea').forEach(function (textarea) {
-    textarea.addEventListener('input', function () {
-        this.style.height = 'auto';
-        this.style.height = this.scrollHeight + 'px';
-    });
-});
-
-document.addEventListener('DOMContentLoaded', function() {
-  // Function to get URL parameters
-  function getUrlParameter(name) {
-    name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
-    var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
-    var results = regex.exec(location.search);
-    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
-  }
-
-  // Get the form element (you can change this selector if needed)
-  var form = document.querySelector('form');
-
-  // Function to gather data and submit
-  function gatherAndSubmit() {
-    var jsonData = {};
-
-    // Get all elements with for_json attribute
-    var elements = form.querySelectorAll('[for_json]');
-
-    elements.forEach(function(element) {
-      var key = element.getAttribute('for_json').replace(/_/g, ' ');
-      var value;
-
-      if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
-        value = element.value;
-      } else if (element.isContentEditable) {
-        value = element.textContent;
-      }
-
-      jsonData[key] = value;
+        textarea.addEventListener('input', function () {
+            this.style.height = 'auto';
+            this.style.height = this.scrollHeight + 'px';
+        });
     });
 
-    // Add the code from URL
-    var code = getUrlParameter('code');
-    if (code) {
-      jsonData['code'] = code;
-    }
+    document.addEventListener('DOMContentLoaded', function() {
+        // Function to get URL parameters
+        function getUrlParameter(name) {
+            name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+            var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+            var results = regex.exec(location.search);
+            return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+        }
 
-    // Post the data
-    fetch(window.location.origin + '/submit', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(jsonData),
-    })
-    .then(response => response.json())
-    .then(data => console.log('Success:', data))
-    .catch((error) => console.error('Error:', error));
-  }
+        // Get the form element
+        var form = document.querySelector('form');
 
-  // Add submit event listener to the form
-  form.addEventListener('submit', function(e) {
-    e.preventDefault();
-    gatherAndSubmit();
-  });
-});
-    
+        // Function to gather data and submit
+        function gatherAndSubmit() {
+            var jsonData = {};
+
+            // Get all elements with for_json attribute
+            var elements = form.querySelectorAll('[for_json]');
+
+            elements.forEach(function(element) {
+                var key = element.getAttribute('for_json').replace(/_/g, ' ');
+                var value;
+
+                if (element.tagName === 'INPUT' || element.tagName === 'TEXTAREA') {
+                    value = element.value;
+                } else if (element.isContentEditable) {
+                    value = element.textContent;
+                }
+
+                jsonData[key] = value;
+            });
+
+            // Add the code from URL
+            var code = getUrlParameter('code');
+            if (code) {
+                jsonData['code'] = code;
+            }
+
+            // Post the data
+            fetch(window.location.origin + '/submit', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(jsonData),
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Redirect to /success on successful completion
+                    window.location.href = '/success';
+                } else {
+                    throw new Error('Network response was not ok.');
+                }
+            })
+            .catch((error) => console.error('Error:', error));
+        }
+
+        // Add submit event listener to the form
+        form.addEventListener('submit', function(e) {
+            e.preventDefault();
+            gatherAndSubmit();
+        });
+    });
 </script>
 </html>
