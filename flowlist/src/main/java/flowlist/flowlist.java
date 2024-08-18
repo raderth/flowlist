@@ -8,12 +8,15 @@ import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import javax.crypto.Cipher;
+import javax.crypto.spec.SecretKeySpec;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.InetSocketAddress;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.stream.Collectors;
 
 public class flowlist extends JavaPlugin {
@@ -28,8 +31,8 @@ public class flowlist extends JavaPlugin {
         saveDefaultConfig();
         loadConfig();
 
-        if (secret == null || secret.isEmpty()) {
-            getLogger().severe("Secret is not set in the config.yml. Please set it and restart the server.");
+        if (secret == null || secret.isEmpty() || secret.length() != 16) {
+            getLogger().severe("Secret in config.yml must be exactly 16 characters long. Please set it and restart the server.");
             Bukkit.getPluginManager().disablePlugin(this);
             return;
         }
@@ -76,19 +79,24 @@ public class flowlist extends JavaPlugin {
             String requestBody = new BufferedReader(new InputStreamReader(exchange.getRequestBody(), StandardCharsets.UTF_8))
                     .lines().collect(Collectors.joining("\n"));
 
-            Gson gson = new Gson();
-            CommandRequest request = gson.fromJson(requestBody, CommandRequest.class);
+            try {
+                String decrypted = decrypt(requestBody);
+                Gson gson = new Gson();
+                CommandRequest request = gson.fromJson(decrypted, CommandRequest.class);
 
-            if (request == null || !secret.equals(request.secret)) {
-                sendResponse(exchange, 403, "Forbidden");
-                return;
+                if (request == null || request.command == null || request.command.isEmpty()) {
+                    sendResponse(exchange, 400, "Bad Request");
+                    return;
+                }
+
+                Bukkit.getScheduler().runTask(flowlist.this, () -> {
+                    Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), request.command);
+                });
+
+                sendResponse(exchange, 200, "Command executed successfully");
+            } catch (Exception e) {
+                sendResponse(exchange, 400, "Decryption failed or invalid request");
             }
-
-            Bukkit.getScheduler().runTask(flowlist.this, () -> {
-                Bukkit.getServer().dispatchCommand(Bukkit.getConsoleSender(), request.command);
-            });
-
-            sendResponse(exchange, 200, "Command executed successfully");
         }
 
         private void sendResponse(HttpExchange exchange, int statusCode, String response) throws IOException {
@@ -99,8 +107,14 @@ public class flowlist extends JavaPlugin {
         }
     }
 
+    private String decrypt(String encryptedText) throws Exception {
+        SecretKeySpec secretKey = new SecretKeySpec(secret.getBytes(StandardCharsets.UTF_8), "AES");
+        Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
+        cipher.init(Cipher.DECRYPT_MODE, secretKey);
+        return new String(cipher.doFinal(Base64.getDecoder().decode(encryptedText)));
+    }
+
     private static class CommandRequest {
-        String secret;
         String command;
     }
 }

@@ -12,6 +12,11 @@ import aiohttp
 import json
 from urllib.parse import quote, urlencode, urlparse
 import os
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import pad
+import base64
+import secrets
+import string
 
 message_queue = queue.Queue()
 APPLICATIONS_KEY = "applications"
@@ -27,6 +32,16 @@ def get(key):
   with shelve.open('mydb') as db:
       return db.get(key)
   
+def encrypt_command(command, secret):
+    data = json.dumps({"command": command}).encode('utf-8')
+    cipher = AES.new(secret.encode('utf-8'), AES.MODE_ECB)
+    ct_bytes = cipher.encrypt(pad(data, AES.block_size))
+    return base64.b64encode(ct_bytes).decode('utf-8')
+
+if not get("post_secret"):
+    secret = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(16))
+    set("post_secret", secret)
+print("Your secret is: "+ str(get("post_secret")))
 
 ##### Configuration initiation #####
 refresh_commands = False
@@ -241,9 +256,8 @@ class ApplicationView(View):
         set(APPLICATIONS_KEY, json.dumps(applications))
 
     async def send_post_request(self, name):
-        if status == "accepted":
-            command = str(get("whitelist"))+" "+name
-        json_data = {"secret":get("post_secret"), "command":command}
+        command = str(get("whitelist"))+" "+name
+        json_data = encrypt_command(command, get("post_secret"))
         print(f"Sending POST request with data: {json.dumps(json_data)}")
         async with aiohttp.ClientSession() as session:
             url = "http://"+str(get("server"))
