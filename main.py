@@ -231,7 +231,7 @@ class ApplicationView(View):
                     user_id = i
                     break
             guild_id = get("guild")
-            guild = client.get_guild(guild_id)
+            guild = bot.get_guild(guild_id)
             member = guild.get_member(user_id)
             role = guild.get_role(role_id)
     
