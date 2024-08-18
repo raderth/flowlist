@@ -33,15 +33,15 @@ refresh_commands = False
 if not get("domain") and get("domain") != '':
   set("domain", input("This server's url. example.com (leave blank if using direct ip. Highly Discouraged!): "))
 if not get("server"):
-   set("server",input("Minecraft server URL: "))
+   set("server",input("Minecraft server URL with configured port. example: 'play.coolserver.com:8080': "))
    refresh_commands = True
 if not get("whitelist"):
-   user_input = input("Whitelist command (username is added on the end later): ")
+   user_input = input("Whitelist command (username is added on the end later) (don't include the '/'): ")
    if user_input[:1] == " ":
       user_input = user_input[:-1]
    set("whitelist",user_input)
 if not get("ban"):
-   user_input = input("Ban command (username is added on the end later): ")
+   user_input = input("Ban command (username is added on the end later) (don't include the '/'): ")
    if user_input[:1] == " ":
       user_input = user_input[:-1]
    set("ban",user_input)
@@ -214,12 +214,11 @@ class ApplicationView(View):
     @discord.ui.button(label="Accept", style=discord.ButtonStyle.green, custom_id="accept")
     async def accept_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.handle_response(interaction, "Accepted", discord.Color.green())
-        await self.send_post_request(self.data, "accepted")
+        await self.send_post_request(self.data["in game name"])
 
     @discord.ui.button(label="Deny", style=discord.ButtonStyle.red, custom_id="deny")
     async def deny_button(self, interaction: discord.Interaction, button: discord.ui.Button):
         await self.handle_response(interaction, "Denied", discord.Color.red())
-        await self.send_post_request(self.data, "denied")
 
     async def handle_response(self, interaction, status, color):
         player_name = self.data.get('in game name', 'Player')
@@ -236,15 +235,24 @@ class ApplicationView(View):
             if member and role:
                 await member.add_roles(role)
       
-            # Remove the application from the database
-            applications = json.loads(get(APPLICATIONS_KEY) or '{}')
-            applications.pop(str(self.message_id), None)
-            set(APPLICATIONS_KEY, json.dumps(applications))
+        # Remove the application from the database
+        applications = json.loads(get(APPLICATIONS_KEY) or '{}')
+        applications.pop(str(self.message_id), None)
+        set(APPLICATIONS_KEY, json.dumps(applications))
 
-    async def send_post_request(self, data, status):
-        json_data = {**data, "status": status}
+    async def send_post_request(self, name):
+        if status == "accepted":
+            command = str(get("whitelist"))+" "+name
+        json_data = {"secret":get("post_secret"), "command":command}
         print(f"Sending POST request with data: {json.dumps(json_data)}")
-        # Implement actual HTTP POST request here
+        async with aiohttp.ClientSession() as session:
+            url = "http://"+str(get("server"))
+            async with session.post(url, json=json_data) as response:
+                if response.status == 200:
+                    return await response.json()
+                else:
+                    print(f"Error: {response.status}")
+                    return None
 
 async def send_confirmation_message(data):
     guild_id = get("guild")
