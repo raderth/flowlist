@@ -110,19 +110,23 @@ I lied, to actually setup your form go to <your-ip/url>/admin and login. You set
 ## Prerequisites
 - Docker Desktop installed and running on Windows.
 
-###Step 1
+<h3>Step 1</h3>
 
 **Pull the Docker Image**
 
    Open PowerShell or Command Prompt and run:
    
-   ```docker pull raderth/flowlist:beta```
+```
+docker pull raderth/flowlist:beta
+```
 
-###Step 2
+<h3>Step 2</h3>
 
-```docker run -it --restart always --name my-flowlist raderth/flowlist:beta```
+```
+docker run -it --restart always --name my-flowlist raderth/flowlist:beta
+```
 
-###Step 3
+<h3>Step 3</h3>
 
 Check your docker settings, amke sure to set it to boot on launch for reliability
 
