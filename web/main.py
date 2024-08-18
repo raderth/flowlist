@@ -55,6 +55,10 @@ if not get("links"):
   set("links", {})
 if not get("managed_roles"):
     set("managed_roles", [])
+if not get("username"):
+  set("username" input("Set a username for the admin panel: "))
+if not get("password"):
+  set("password" input("Set a password for the admin panel: "))
 
 if get("domain") != "":
    print("Remember to add this url to your redirects: "+"https://"+get("domain")+"/callback")
@@ -98,8 +102,8 @@ def form():
     
   return render_template("index.html", content=content)
 
-TEST_USERNAME = "admin"
-TEST_PASSWORD = 'lGGN2ZEfmL'
+TEST_USERNAME = get("username")
+TEST_PASSWORD = get("password")
 
 @app.route('/admin', methods=['GET', 'POST'])
 def admin():
