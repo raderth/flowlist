@@ -104,7 +104,27 @@ Install the plugin and you should be good to go!
 I lied, to actually setup your form go to <your-ip/url>/admin and login. You set this password if you ran flowlist!
 
 <hr>
-Alternatively you can install docker desktop on an old windows machine. If you go into the settings you can make it boot on launch. I'll add more details on this at some point in the future
+
+# Running a Docker Image Automatically on Windows
+
+## Prerequisites
+- Docker Desktop installed and running on Windows.
+
+###Step 1
+
+**Pull the Docker Image**
+
+   Open PowerShell or Command Prompt and run:
+   
+   ```docker pull raderth/flowlist:beta```
+
+###Step 2
+
+```docker run -it --restart always --name my-flowlist raderth/flowlist:beta```
+
+###Step 3
+
+Check your docker settings, amke sure to set it to boot on launch for reliability
 
 <h2>Discord Setup</h2>
 <ul>
