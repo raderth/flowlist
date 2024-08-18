@@ -72,8 +72,10 @@ I lied, to actually setup your form go to <your-ip/url>/admin and login. You set
 Alternatively you can install docker desktop on an old windows machine. If you go into the settings you can make it boot on launch. I'll add more details on this at some point in the future
 
 <h2>Discord Setup</h2>
-use <b>/add</b> and <b>/remove</b> respectively to select who is allowed to use <b>/whitelist</b> and <b>/ban</b>
-use <b>/set</b> to select the channel that application will be sent in, make sure this is moderator only accessible
-use <b>/role</b> to select the role that players recieve when accepted. You can use this to unlock certain channels in your discord
+<ul>
+<li>use <b>/add</b> and <b>/remove</b> respectively to select who is allowed to use <b>/whitelist</b> and <b>/ban</b></li>
+<li>use <b>/set</b> to select the channel that application will be sent in, make sure this is moderator only accessible</li>
+<li>use <b>/role</b> to select the role that players recieve when accepted. You can use this to unlock certain channels in your discord</li>
+</ul>
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
