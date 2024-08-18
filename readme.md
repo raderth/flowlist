@@ -66,10 +66,14 @@ Complete the configuration as prompted. In discord you need to use <b>/set</b> a
 Install the plugin and you should be good to go!
 
 <h3>Step 6</h3>
-I lied, to actually setup your form go to <your-ip/url>/admin and login. The default username is admin and password is lGGN2ZEfmL
-yes I'm going to fix that at some point
+I lied, to actually setup your form go to <your-ip/url>/admin and login. You set this password if you ran flowlist!
 
 <hr>
 Alternatively you can install docker desktop on an old windows machine. If you go into the settings you can make it boot on launch. I'll add more details on this at some point in the future
+
+<h2>Discord Setup</h2>
+use ```/add``` and ```/remove``` respectively to select who is allowed to use ```/whitelist``` and ```/ban```
+use ```/set``` to select the channel that application will be sent in, make sure this is moderator only accessible
+use ```/role``` to select the role that players recieve when accepted. You can use this to unlock certain channels in your discord
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
