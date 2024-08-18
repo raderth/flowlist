@@ -55,8 +55,43 @@ sudo systemctl enable docker
 Download the latest release of flowlist from releases. Then run it!
 
 ```
-wget <release url>
-docker run -it flowlist
+docker pull raderth/flowlist:beta
+docker run -it raderth/flowlist:beta
+```
+
+<p>For it to be running even if the server crashes and reboots,</p>
+<p>Try:</p>
+
+```
+vim /etc/systemd/system/flowlist.service
+```
+
+or,
+
+```
+nano /etc/systemd/system/flowlist.service
+```
+
+Add this to the file:
+
+```
+[Unit]
+Description=flowlist
+After=network.target
+
+[Service]
+Restart=always
+ExecStart=/usr/bin/docker run --rm --name flowlist raderth/flowlist:beta
+ExecStop=/usr/bin/docker stop flowlist
+
+[Install]
+WantedBy=multi-user.target
+```
+
+Enable at startup:
+
+```
+sudo systemctl enable flowlist.service
 ```
 
 <h3>Step 4</h3>
