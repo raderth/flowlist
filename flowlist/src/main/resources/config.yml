@@ -1,0 +1,6 @@
+# Configuration for flowlist plugin
+# Set your secret key here. This must be set for the plugin to work.
+secret: ""
+
+# The port to run the HTTP server on. Default is 8080.
+port: 8080
