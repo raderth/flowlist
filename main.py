@@ -221,7 +221,22 @@ class ApplicationView(View):
         player_name = self.data.get('name', 'Player')
         response_embed = discord.Embed(title=f"{status}!", description=f"{player_name} was {status.lower()}!", color=color)
         await interaction.response.edit_message(embed=response_embed, view=None)
-        
+
+        if status.lower() == "accepted":
+            role_id = get("role")
+            user_id = 0
+            for i in get("links"):
+                if links[i] == player_name:
+                    user_id = i
+                    break
+            guild_id = get("guild")
+            guild = client.get_guild(guild_id)
+            member = guild.get_member(user_id)
+            role = guild.get_role(role_id)
+    
+            if member and role:
+                await member.add_roles(role)
+      
         # Remove the application from the database
         applications = json.loads(get(APPLICATIONS_KEY) or '{}')
         applications.pop(str(self.message_id), None)
