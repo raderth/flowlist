@@ -51,7 +51,7 @@ if not get("secret"):
    set("secret", input("Discord client secret: "))
 if not get("client_id"):
    set("client_id", input("Bot's client ID: "))
-if not get("links"):
+if not :
   set("links", {})
 if not get("managed_roles"):
     set("managed_roles", [])
@@ -225,7 +225,8 @@ class ApplicationView(View):
         if status.lower() == "accepted":
             role_id = get("role")
             user_id = 0
-            for i in get("links"):
+            links = get("links")
+            for i in links:
                 if links[i] == player_name:
                     user_id = i
                     break
