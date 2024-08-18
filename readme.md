@@ -137,4 +137,10 @@ Check your docker settings, amke sure to set it to boot on launch for reliabilit
 <li>use <b>/role</b> to select the role that players recieve when accepted. You can use this to unlock certain channels in your discord</li>
 </ul>
 
+<h2>The plugin!</h2>
+<p>Go over to releases and get the latest jar</p>
+<p>Place it in your plugins folder</p>
+<p>After one launch navigate to flowlist/config</p>
+<p>There is a secret your other server will print into the console, this is used to decrypt commands sent to your server to prevent hackers. Paste it into your config</p>
+
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
