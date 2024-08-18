@@ -227,16 +227,15 @@ class ApplicationView(View):
             user_id = 0
             links = get("links")
             for i in links:
+                print(str(links[i]) +" : "+ player_name )
                 if links[i] == player_name:
                     user_id = i
                     break
             guild_id = get("guild")
             guild = bot.get_guild(guild_id)
-            member = guild.get_member(user_id)
+            member = guild.get_member(int(user_id))
             role = guild.get_role(role_id)
-    
-            if member and role:
-                await member.add_roles(role)
+            await member.add_roles(role)
       
         # Remove the application from the database
         applications = json.loads(get(APPLICATIONS_KEY) or '{}')
@@ -251,11 +250,10 @@ class ApplicationView(View):
 async def send_confirmation_message(data):
     guild_id = get("guild")
     guild = discord.utils.get(bot.guilds, id=guild_id)
-    
-    for member in guild.members:
-        if int(member.id) == int(data['code']):
-            embed = discord.Embed(title="Confirmation", description="Your application has been submitted and is being carefully reviewed", color=0xffa500)
-            await member.send(embed=embed)
+
+    member = guild.get_member(int(data["code"]))
+    embed = discord.Embed(title="Confirmation", description="Your application has been submitted and is being carefully reviewed", color=0xffa500)
+    await member.send(embed=embed)
 
     links = get("links")
     links[data['code']] = data['in game name']
