@@ -218,23 +218,18 @@ class ApplicationView(View):
         await self.send_post_request(self.data, "denied")
 
     async def handle_response(self, interaction, status, color):
-        player_name = self.data.get('name', 'Player')
-        response_embed = discord.Embed(title=f"{status}!", description=f"{player_name} was {status.lower()}!", color=color)
-        await interaction.response.edit_message(embed=response_embed, view=None)
+    player_name = self.data.get('in game name', 'Player')
+    response_embed = discord.Embed(title=f"{status}!", description=f"{player_name} was {status.lower()}!", color=color)
+    await interaction.response.edit_message(embed=response_embed, view=None)
 
-        if status.lower() == "accepted":
-            role_id = get("role")
-            user_id = 0
-            links = get("links")
-            for i in links:
-                print(str(links[i]) +" : "+ player_name )
-                if links[i] == player_name:
-                    user_id = i
-                    break
-            guild_id = get("guild")
-            guild = bot.get_guild(guild_id)
-            member = guild.get_member(int(user_id))
-            role = guild.get_role(role_id)
+    if status.lower() == "accepted":
+        role_id = get("role")
+        user_id = self.data.get('code')
+        guild_id = get("guild")
+        guild = discord.utils.get(bot.guilds, id=guild_id)
+        member = guild.get_member(int(user_id))
+        role = guild.get_role(role_id)
+        if member and role:
             await member.add_roles(role)
       
         # Remove the application from the database
