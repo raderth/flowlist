@@ -73,7 +73,7 @@ if not get("managed_roles"):
 if not get("username"):
   set("username", input("Set a username for the admin panel: "))
 if not get("password"):
-  set("password" input("Set a password for the admin panel: "))
+  set("password", input("Set a password for the admin panel: "))
 
 if get("domain") != "":
    print("Remember to add this url to your redirects: "+"https://"+get("domain")+"/callback")
