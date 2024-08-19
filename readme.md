@@ -27,7 +27,7 @@
 
 <hr>
 <h1>Setup</h1>
-<p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 80)</p>
+<p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 8080)</p>
 <p>I'm using linux here. Scroll down for windows</p>
 <h2>requirements</h2>
 <ul>
