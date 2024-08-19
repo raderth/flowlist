@@ -27,7 +27,7 @@
 
 <hr>
 <h1>Setup</h1>
-<p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 8080)</p>
+<p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 80 on this server)</p>
 <p>I'm using linux here. Scroll down for windows</p>
 <h2>requirements</h2>
 <ul>
@@ -98,7 +98,7 @@ sudo systemctl enable flowlist.service
 Complete the configuration as prompted. In discord you need to use <b>/set</b> and <b>/add</b> to set the channel for applications and add to set who can use <b>/whitelist</b> and <b>/ban</b>
 
 <h3>Step 5</h3>
-Install the plugin and you should be good to go!
+Install the plugin, open port 8080 on your minecraft server and you should be good to go!
 
 <h3>Step 6</h3>
 I lied, to actually setup your form go to <your-ip/url>/admin and login. You set this password if you ran flowlist!
