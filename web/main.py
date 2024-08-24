@@ -247,6 +247,13 @@ class ApplicationView(View):
             role = guild.get_role(role_id)
             if member and role:
                 await member.add_roles(role)
+              
+            embed = discord.Embed(title="Accepted", description="You have been accepted! You can now join the server", color=0x00ff00)
+            await member.send(embed=embed)
+        else:
+            member = guild.get_member(int(user_id))
+            embed = discord.Embed(title="Denied", description="You have been denied! You have been deemed a bad fit for our community", color=0xff0000)
+            await member.send(embed=embed)
       
         # Remove the application from the database
         applications = json.loads(get(APPLICATIONS_KEY) or '{}')
