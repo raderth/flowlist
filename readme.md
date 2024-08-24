@@ -123,7 +123,8 @@ docker pull raderth/flowlist:beta
 <h3>Step 2</h3>
 
 ```
-docker run -it --restart always --name my-flowlist raderth/flowlist:beta
+docker volume create my_volume
+docker run -it -p 80:80 -v my_volume:/data --restart always --name my-flowlist raderth/flowlist:beta
 ```
 
 <h3>Step 3</h3>
