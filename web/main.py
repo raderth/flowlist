@@ -455,12 +455,12 @@ async def on_ready():
     
     set(APPLICATIONS_KEY, json.dumps(applications))
 
-    bot.loop.create_task(process_message_queue())
-
 def run_bot():
   bot.run(get("token"))
 
 if __name__ == "__main__":
-  threading.Thread(target=run_bot).start()
-  app.run(host='0.0.0.0', port=80)
+    loop = asyncio.get_event_loop()
+    loop.create_task(process_message_queue())
+    loop.create_task(bot.start(get("token")))
+    app.run(host='0.0.0.0', port=80, use_reloader=False)
   
