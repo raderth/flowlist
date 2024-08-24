@@ -47,9 +47,7 @@ print("Your secret is: "+ str(get("post_secret")))
 refresh_commands = False
 if not get("domain") and get("domain") != '':
   set("domain", input("This server's url. example.com (leave blank if using direct ip. Highly Discouraged!): "))
-if not get("server"):
-   set("server",input("Minecraft server URL with configured port. example: 'play.coolserver.com:8080': "))
-   refresh_commands = True
+  refresh_commands = True
 if not get("whitelist"):
    user_input = input("Whitelist command (username is added on the end later) (don't include the '/'): ")
    if user_input[:1] == " ":
@@ -313,7 +311,7 @@ class RoleView(discord.ui.View):
         super().__init__()
         self.add_item(RoleSelect(roles))
 
-@bot.tree.command(name="role", description="Set a role in the database (Admin only)")
+@bot.tree.command(name="role", description="Set a role to apply when a player is accepted (Admin only)")
 @app_commands.checks.has_permissions(administrator=True)
 async def set_role(interaction: discord.Interaction):
     roles = interaction.guild.roles[1:]  # Exclude @everyone role
@@ -400,7 +398,7 @@ async def get_ids(interaction: discord.Interaction):
     view = ChannelView(channels)
     await interaction.response.send_message("Please select a channel:", view=view)
 
-@bot.tree.command(name="add", description="Add a role to the managed list")
+@bot.tree.command(name="add", description="Add a role for who can use commands")
 @app_commands.checks.has_permissions(administrator=True)
 async def add_role(interaction: discord.Interaction, role: discord.Role):
     if role.id not in get("managed_roles"):
@@ -411,7 +409,7 @@ async def add_role(interaction: discord.Interaction, role: discord.Role):
     else:
         await interaction.response.send_message(f"{role.name} is already in the managed roles list.")
 
-@bot.tree.command(name="remove", description="Remove a role from the managed list")
+@bot.tree.command(name="remove", description="Remove a role for who can use commands")
 @app_commands.checks.has_permissions(administrator=True)
 async def remove_role(interaction: discord.Interaction, role: discord.Role):
     if role.id in get("managed_roles"):
