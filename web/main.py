@@ -208,7 +208,7 @@ def submit():
 
 @app.route('/success')
 def success():
-    return "Success"
+    return render_template("success.html")
 
 
 ##### BOT #####
