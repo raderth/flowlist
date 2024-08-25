@@ -57,7 +57,7 @@ Pull the latest release of flowlist. Then run it!
 ```
 docker pull raderth/flowlist:beta
 docker volume create my_volume
-docker run -it -p 80:80 -v my_volume:/data --restart always --name my-flowlist raderth/flowlist:beta
+docker run -it -p 80:80 -v my_volume:/app --restart always --name my-flowlist raderth/flowlist:beta
 ```
 
 <p>For it to be running even if the server crashes and reboots,</p>
@@ -125,7 +125,7 @@ docker pull raderth/flowlist:beta
 
 ```
 docker volume create my_volume
-docker run -it -p 80:80 -v my_volume:/data --restart always --name my-flowlist raderth/flowlist:beta
+docker run -it -p 80:80 -v my_volume:/app --restart always --name my-flowlist raderth/flowlist:beta
 ```
 
 <h3>Step 3</h3>
