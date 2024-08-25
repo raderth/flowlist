@@ -50,7 +50,7 @@ print("Your secret is: "+ str(get("post_secret")))
 ##### Configuration initiation #####
 refresh_commands = False
 if not get("domain") and get("domain") != '':
-  set("domain", input("This server's url. example.com (leave blank if using direct ip. Highly Discouraged!): "))
+  set("domain", "")
   refresh_commands = True
 if not get("whitelist"):
    user_input = input("Whitelist command (username is added on the end later) (don't include the '/'): ")
