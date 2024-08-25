@@ -52,7 +52,7 @@ sudo systemctl start docker
 sudo systemctl enable docker
 ```
 <h3>Step 3</h3>
-Download the latest release of flowlist from releases. Then run it!
+Pull the latest release of flowlist. Then run it!
 
 ```
 docker pull raderth/flowlist:beta
