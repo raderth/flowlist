@@ -17,7 +17,11 @@ from Crypto.Util.Padding import pad
 import base64
 import secrets
 import string
+from quart import Quart
+from hypercorn.asyncio import serve
+from hypercorn.config import Config
 
+app = Quart(__name__)
 message_queue = queue.Queue()
 APPLICATIONS_KEY = "applications"
 intents = discord.Intents.default()
@@ -456,9 +460,6 @@ async def on_ready():
     
     set(APPLICATIONS_KEY, json.dumps(applications))
   
-def run_flask():
-    app.run(host='0.0.0.0', port=80, use_reloader=False)
-
 async def start_bot():
     await bot.start(get("token"))
 
@@ -466,12 +467,15 @@ async def main():
     bot_task = asyncio.create_task(start_bot())
     queue_task = asyncio.create_task(process_message_queue())
     
-    # Run Flask in a separate thread
-    flask_thread = Thread(target=run_flask)
-    flask_thread.start()
-
+    config = Config()
+    config.bind = ["0.0.0.0:80"]
+    
     try:
-        await asyncio.gather(bot_task, queue_task)
+        await asyncio.gather(
+            serve(app, config),
+            bot_task,
+            queue_task
+        )
     except KeyboardInterrupt:
         print("Shutting down...")
     finally:
