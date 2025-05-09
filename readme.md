@@ -102,7 +102,7 @@ Complete the configuration as prompted. In discord you need to use <b>/set</b> a
 Install the plugin, open port 8080 on your minecraft server and you should be good to go!
 
 <h3>Step 6</h3>
-I lied, to actually setup your form go to <your-ip/url>/admin and login. You set this password if you ran flowlist!
+To setup your form go to [your-ip orn server url]/admin and login. You set this password if you ran flowlist!
 
 <hr>
 
