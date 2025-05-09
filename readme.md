@@ -130,7 +130,7 @@ docker run -it -p 80:80 -v my_volume:/app --restart always --name my-flowlist ra
 
 <h3>Step 3</h3>
 
-Check your docker settings, amke sure to set it to boot on launch for reliability
+Check your docker settings, make sure to set it to boot on launch for reliability
 
 <h2>Discord Setup</h2>
 <ul>
