@@ -27,7 +27,9 @@
 <li>/cmd</li>
 </ul>
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
+<h2>Use</h2>
+<p>Access the form at /form and the admin panel at /panel</p>
+<p>remember to add and setup the discord bot using the built in commands, /set sets the channel for applications to arrive in, /role is your whitelisted role, /add is as role to give your admins</p>
 
 <hr>
 <h1>Setup</h1>
@@ -67,8 +69,10 @@ rcon.password=your_secure_password
 #### **Most servers (linux)**
 Run this:
 ```
-curl -fsSL https://github.com/raderth/flowlist/releases/latest/download/install.sh -o install.sh && bash install.sh
+curl -fsSL https://github.com/raderth/flowlist/releases/download/beta/installer.sh -o installer.sh && bash installer.sh
 ```
+the linux version uses port 8080 since it's hard to get port 80 to work on a lot of servers. So all urls will be <your-public-ip>:8080/link
+<p>This script attempts to create a service to boot on every launch, you may have to do this manually if it didn't work, try and find main.py it should be in flowlist/web</p>
 
 
 #### **Windows**
