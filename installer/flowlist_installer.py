@@ -33,11 +33,14 @@ def install():
     venv_python = get_venv_python()
 
     print("Installing dependencies...")
-    req_file = os.path.join(REPO_NAME, "requirements.txt")
-    if os.path.exists(req_file):
-        run([venv_python, "-m", "pip", "install", "-r", req_file])
-    else:
-        run([venv_python, "-m", "pip", "install", "flask", "discord.py"])
+    run([venv_python, "-m", "pip", "install", 
+         "discord.py==2.5.2", 
+         "Flask==3.1.0", 
+         "hypercorn==0.17.3", 
+         "mcrcon==0.7.0", 
+         "quart==0.20.0", 
+         "Requests==2.32.3"])
+
 
 def run_app():
     venv_python = get_venv_python()
