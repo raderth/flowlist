@@ -69,7 +69,7 @@ rcon.password=your_secure_password
 #### **Most servers (linux)**
 Run this:
 ```
-curl -fsSL https://github.com/raderth/flowlist/releases/latest/download/install.sh -o install.sh && bash install.sh
+curl -fsSL https://github.com/raderth/flowlist/releases/download/beta/installer.sh -o installer.sh && bash installer.sh
 ```
 the linux version uses port 8080 since it's hard to get port 80 to work on a lot of servers. So all urls will be <your-public-ip>:8080/link
 
