@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flowlist Setup</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        .section {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            border-radius: 5px;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        
+        input[type="text"],
+        input[type="password"],
+        input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        
+        .success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Flowlist Configuration</h1>
+        
+        <div class="section">
+            <h2>Discord Bot Configuration</h2>
+            <div class="form-group">
+                <label for="client_id">Client ID:</label>
+                <input type="text" id="client_id" value="{{ config.client_id }}">
+            </div>
+            <div class="form-group">
+                <label for="client_secret">Client Secret:</label>
+                <input type="text" id="client_secret" value="{{ config.client_secret }}">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Minecraft Server Configuration</h2>
+            <div class="form-group">
+                <label for="whitelist_command">Whitelist Command:</label>
+                <input type="text" id="whitelist_command" value="{{ config.whitelist_command }}">
+                <small>Example: whitelist add</small>
+            </div>
+            <div class="form-group">
+                <label for="ban_command">Ban Command:</label>
+                <input type="text" id="ban_command" value="{{ config.ban_command }}">
+                <small>Example: ban</small>
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>RCON Configuration</h2>
+            <div class="form-group">
+                <label for="rcon_host">RCON Host:</label>
+                <input type="text" id="rcon_host" value="{{ config.rcon_host }}">
+            </div>
+            <div class="form-group">
+                <label for="rcon_port">RCON Port:</label>
+                <input type="number" id="rcon_port" value="{{ config.rcon_port }}">
+            </div>
+            <div class="form-group">
+                <label for="rcon_password">RCON Password:</label>
+                <input type="password" id="rcon_password" value="{{ config.rcon_password }}">
+            </div>
+        </div>
+        
+        <div class="section">
+            <h2>Admin Panel Configuration</h2>
+            <div class="form-group">
+                <label for="admin_username">Admin Username:</label>
+                <input type="text" id="admin_username" value="{{ config.admin_username }}">
+            </div>
+            <div class="form-group">
+                <label for="admin_password">Admin Password:</label>
+                <input type="password" id="admin_password" value="{{ config.admin_password }}">
+            </div>
+        </div>
+        
+        <button id="saveBtn">Save Configuration</button>
+        
+        <div id="statusMessage" class="status"></div>
+    </div>
+    
+    <script>
+        document.getElementById('saveBtn').addEventListener('click', function() {
+            // Gather form data
+            const data = {
+                client_id: document.getElementById('client_id').value,
+                client_secret: document.getElementById('client_secret').value,
+                whitelist_command: document.getElementById('whitelist_command').value,
+                ban_command: document.getElementById('ban_command').value,
+                rcon_host: document.getElementById('rcon_host').value,
+                rcon_port: document.getElementById('rcon_port').value,
+                rcon_password: document.getElementById('rcon_password').value,
+                admin_username: document.getElementById('admin_username').value,
+                admin_password: document.getElementById('admin_password').value
+            };
+            
+            // Submit data
+            fetch('/setup', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data),
+            })
+            .then(response => response.json())
+            .then(data => {
+                const statusElement = document.getElementById('statusMessage');
+                statusElement.textContent = data.message;
+                statusElement.classList.add('success');
+                statusElement.style.display = 'block';
+                
+                setTimeout(() => {
+                    statusElement.style.display = 'none';
+                }, 5000);
+            })
+            .catch(error => {
+                const statusElement = document.getElementById('statusMessage');
+                statusElement.textContent = 'Error saving configuration: ' + error;
+                statusElement.classList.add('error');
+                statusElement.style.display = 'block';
+            });
+        });
+    </script>
+</body>
+</html>
