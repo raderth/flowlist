@@ -5,6 +5,7 @@
 INSTALL_DIR=$(pwd)
 REPO_URL="https://github.com/raderth/flowlist.git"
 REPO_NAME="flowlist"
+PORT=8080 # You can change this if necessary
 
 # Check if flowlist directory exists
 if [ ! -d "$REPO_NAME" ]; then
@@ -52,6 +53,7 @@ WorkingDirectory=$INSTALL_DIR/$REPO_NAME
 Restart=always
 Environment=VIRTUAL_ENV=$INSTALL_DIR/$REPO_NAME/venv
 Environment=PATH=$INSTALL_DIR/$REPO_NAME/venv/bin:$PATH
+Environment=PORT=$PORT
 
 [Install]
 WantedBy=default.target
