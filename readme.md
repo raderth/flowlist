@@ -72,7 +72,7 @@ Run this:
 curl -fsSL https://github.com/raderth/flowlist/releases/download/beta/installer.sh -o installer.sh && bash installer.sh
 ```
 the linux version uses port 8080 since it's hard to get port 80 to work on a lot of servers. So all urls will be <your-public-ip>:8080/link
-This script attempt to create a service to boot on every launch, you may ahve to do this manually, try and find main.py it should be in flowlist/web
+<p>This script attempt to create a service to boot on every launch, you may ahve to do this manually, try and find main.py it should be in flowlist/web</p>
 
 
 #### **Windows**
