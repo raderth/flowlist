@@ -31,8 +31,6 @@
 <p>Access the form at /form and the admin panel at /panel</p>
 <p>remember to add and setup the discord bot using the built in commands, /set sets the channel for applications to arrive in, /role is your whitelisted role, /add is as role to give your admins</p>
 
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
-
 <hr>
 <h1>Setup</h1>
 <p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 80 on this server, this might already be done depending on your setup)</p>
