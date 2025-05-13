@@ -1,4 +1,7 @@
 
+
+
+
 ![header](https://github.com/raderth/flowlist/blob/main/images/header.png?raw=true)
 
 <h1>Description</h1>
@@ -21,128 +24,59 @@
 <ul>
 <li>/whitelist</li>
 <li>/ban</li>
+<li>/cmd</li>
 </ul>
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
 
 <hr>
 <h1>Setup</h1>
-<p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 80 on this server)</p>
-<p>I'm using linux here. Scroll down for windows</p>
-<h2>requirements</h2>
-<ul>
-<li>A basic server with docker (there are a lot of free ones that will work fine for most people)</li>
-<li>Ability to open port 80</li>
-<li>Ability to open ports on minecraft server</li>
-<li>Ability to download plugins on minecraft server</li>
-</ul>
-<h3>Step 1</h3>
-<a href="https://discordpy.readthedocs.io/en/stable/discord.html">Make a discord bot</a><p>and write down the bot <b>token</b> the <b>client secret</b> and the <b>client ID</b>.</p>
-<p>you also need to add a redirect for your server (not the minecraft one)</p>
+<p>Make sure you get a server up and running. Get a more experienced person for this if you are likely to struggle, but you can setup any old machine you have(remember to port forward port 80 on this server, this might already be done depending on your setup)</p>
+
+## Requirements
+- Any basic Linux server with Docker installed
+- Ability to open port 80 and Minecraft server ports (e.g., 25575 for RCON, 8080 for plugin API)
+- Ability to install plugins on your Minecraft server
+
+---
+
+## Discord Bot Setup
+1. [Create a Discord bot](https://discordpy.readthedocs.io/en/stable/discord.html)
+2. Note the **token**, **client ID**, and **client secret**
+3. Add a **redirect URI** pointing to your web server
 
 ![redirects](https://github.com/raderth/flowlist/blob/main/images/redirects.png?raw=true)
 
-<h3>Step 2</h3>
-Paste these commands into the linux console!
-Install docker, sometimes it's preinstalled but running this wont do any harm
+---
 
-```
-sudo apt-get install -y docker.io
-sudo systemctl start docker
-sudo systemctl enable docker
-```
-<h3>Step 3</h3>
-Pull the latest release of flowlist. Then run it!
 
+## Minecraft Server Setup
+1. Open `server.properties`
+2. Set: 
 ```
-docker pull raderth/flowlist:beta
-docker volume create my_volume
-docker run -it -p 80:80 -v my_volume:/app --restart always --name my-flowlist raderth/flowlist:beta
+enable-rcon=true
+rcon.password=your_secure_password
 ```
+3. Open the **RCON port** (default: `25575`)
+4. You'll enter this port and password during Flowlist setup
 
-<p>For it to be running even if the server crashes and reboots,</p>
-<p>Try:</p>
+---
 
+
+## Install
+#### **Most servers (linux)**
+Run this:
 ```
-vim /etc/systemd/system/flowlist.service
+curl -fsSL https://github.com/raderth/flowlist/releases/latest/download/install.sh -o install.sh && bash install.sh
 ```
 
-or,
 
+#### **Windows**
+1. Get the exe in releases.
+2. Create a shortcut to your `.exe` in:
 ```
-nano /etc/systemd/system/flowlist.service
+%APPDATA%\Microsoft\Windows\Start Menu\Programs\Startup
 ```
-
-Add this to the file:
-
-```
-[Unit]
-Description=flowlist
-After=network.target
-
-[Service]
-Restart=always
-ExecStart=/usr/bin/docker run --rm --name flowlist raderth/flowlist:beta
-ExecStop=/usr/bin/docker stop flowlist
-
-[Install]
-WantedBy=multi-user.target
-```
-
-Enable at startup:
-
-```
-sudo systemctl enable flowlist.service
-```
-
-<h3>Step 4</h3>
-Complete the configuration as prompted. In discord you need to use <b>/set</b> and <b>/add</b> to set the channel for applications and add to set who can use <b>/whitelist</b> and <b>/ban</b>
-
-<h3>Step 5</h3>
-Install the plugin, open port 8080 on your minecraft server and you should be good to go!
-
-<h3>Step 6</h3>
-To setup your form go to [your-ip or server url]/admin and login. You set this password if you ran flowlist!
-
-<hr>
-
-# Running a Docker Image Automatically on Windows
-
-## Prerequisites
-- Docker Desktop installed and running on Windows.
-
-<h3>Step 1</h3>
-
-**Pull the Docker Image**
-
-   Open PowerShell or Command Prompt and run:
-   
-```
-docker pull raderth/flowlist:beta
-```
-
-<h3>Step 2</h3>
-
-```
-docker volume create my_volume
-docker run -it -p 80:80 -v my_volume:/app --restart always --name my-flowlist raderth/flowlist:beta
-```
-
-<h3>Step 3</h3>
-
-Check your docker settings, make sure to set it to boot on launch for reliability
-
-<h2>Discord Setup</h2>
-<ul>
-<li>use <b>/add</b> and <b>/remove</b> respectively to select who is allowed to use <b>/whitelist</b> and <b>/ban</b></li>
-<li>use <b>/set</b> to select the channel that application will be sent in, make sure this is moderator only accessible</li>
-<li>use <b>/role</b> to select the role that players recieve when accepted. You can use this to unlock certain channels in your discord</li>
-</ul>
-
-<h2>The plugin!</h2>
-<p>Go over to releases and get the latest jar</p>
-<p>Place it in your plugins folder</p>
-<p>After one launch navigate to flowlist/config</p>
-<p>There is a secret your other server will print into the console, this is used to decrypt commands sent to your server to prevent hackers. Paste it into your config</p>
 
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/P5P7YI0NT)
+
