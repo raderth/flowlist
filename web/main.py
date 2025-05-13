@@ -539,13 +539,15 @@ async def start_bot():
 async def main():
     bot_task = asyncio.create_task(start_bot())
     queue_task = asyncio.create_task(process_message_queue())
-    
+
     config = Config()
-    config.bind = ["0.0.0.0:80"]
-    
+
+    # Bind both ports 80 and 8080
+    config.bind = ["0.0.0.0:80", "0.0.0.0:8080"]
+
     try:
         await asyncio.gather(
-            serve(app, config),
+            serve(app, config),  # Serve the app on both ports
             bot_task,
             queue_task
         )
